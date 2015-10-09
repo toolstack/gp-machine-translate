@@ -1,9 +1,9 @@
 # GlotPress Google Translate
-A Google Translate plugin for GlotPress as a WordPress plugin.
+A Google Translate plugin for [GlotPress as a WordPress plugin](https://github.com/deliciousbrains/GlotPress).
 
 Google translate is a pay service, you must acquire an API key from Google and setup a payment option with them.
 
-Login to your Google developers console (http://console.developer.google.com) and select "APIs & auth"->Credentials.  Then create a new "Public API access" Key.  Use this key as below to configure access.
+Login to your [Google developers console](http://console.developer.google.com) and select "APIs & auth"->Credentials.  Then create a new "Public API access" Key.  Use this key as below to configure access.
 
 Once you have the Google API key, you can set the key for all users or a specific user.
 
