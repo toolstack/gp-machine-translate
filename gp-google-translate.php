@@ -3,7 +3,7 @@
 Plugin Name: GlotPress Google Translate
 Plugin URI: http://glotpress.org/
 Description: Google Translate plugin for GlotPress.
-Version: 0.1
+Version: 0.1.1
 Author: GlotPress
 Author URI: http://glotpress.org
 Tags: glotpress, glotpress plugin, translate, google 
