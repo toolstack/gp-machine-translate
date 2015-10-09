@@ -62,7 +62,7 @@ class GP_Google_Translate {
 		// If the user cannot edit their profile, then don't show the settings
 		if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
 ?>
-	<h3 id=\"gp-google-translate\"><?php _e('GlotPress Google Translate'); ?></h3>
+	<h3 id="gp-google-translate"><?php _e('GlotPress Google Translate'); ?></h3>
 	<table class="form-table">
 		<tr>
 			<th><label for="gp_google_translate_user_key"><?php _e('User Google API Key');?></label></th>
