@@ -6,6 +6,7 @@ Description: Google Translate plugin for GlotPress.
 Version: 0.1
 Author: GlotPress
 Author URI: http://glotpress.org
+Tags: glotpress, glotpress plugin, translate, google 
 License: GPLv2 or later
 */
 
