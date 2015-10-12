@@ -3,7 +3,7 @@
 Plugin Name: GlotPress Google Translate
 Plugin URI: http://glotpress.org/
 Description: Google Translate plugin for GlotPress.
-Version: 0.2
+Version: 0.3
 Author: GlotPress
 Author URI: http://glotpress.org
 Tags: glotpress, glotpress plugin, translate, google 
@@ -25,8 +25,9 @@ class GP_Google_Translate {
 			// If someone is logged in, get their user object.
 			$user_obj = GP::$user->current();
 			
-			// Load the user translate key from the WordPress options table, using the currently logged in user id.
-			$user_key = get_option('gp_google_translate_key_' . strtolower($user_obj->user_login));
+			// Load the user translate key from the WordPress user meta table, using the currently logged in user id.
+			$user_key = get_user_meta( $user_obj->id, 'gp_google_translate_key', true );
+			
 			// If there is a user key, override the global key.
 			if( $user_key ) { $this->key = $user_key; }
 		}
@@ -69,7 +70,7 @@ class GP_Google_Translate {
 	// Genreate the HTML when a user profile is edited.  Note the $user parameter is a full user object for this function.
 	public function edit_user_profile( $user ) {
 		// Get the current user key from the WordPress options table.
-		$user_key = get_option( 'gp_google_translate_key_' . $user->user_login );
+		$user_key = get_user_meta( $user->ID, 'gp_google_translate_key', true );
 		
 		// If the user cannot edit their profile, then don't show the settings.
 		if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
@@ -94,8 +95,7 @@ class GP_Google_Translate {
 		if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
 		
 		// Unlike the profile edit function, we only get the user id passed in as a parameter.
-		$user = get_user_by( 'id', $user_id );
-		update_option( 'gp_google_translate_key_' . $user->user_login,  sanitize_text_field( $_POST['gp_google_translate_user_key'] ) );
+		update_user_meta( $user_id, 'gp_google_translate_key', sanitize_text_field( $_POST['gp_google_translate_user_key'] ) );
 	}
 
 	// Once a user profile has been edited, this function saves the settings to the WordPress options table.
