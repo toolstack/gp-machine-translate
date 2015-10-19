@@ -18,8 +18,10 @@ Converting from the standalone GlotPress plugin system to the GlotPress as a Wor
 
 1. Add a WordPress plugin header block to the top of your plugin file.
 2. Any add_action() or add_filters() calls you have must be converted to the WordPress add_action()/add_filter() format.
-3. If your using a define() to enable/disable your plugin, remove it, using the activeate/deactivate functionality in WordPress's plugin system is the way to go.
-4. If your using warnings/errors, replace them with the appropriate gp_notice_set() call ( gp_notice_set( $string ) for warnings, gp_notice_set( $string, 'error' ) for errors).
-5. Replace your initalization of the plugin with a add_action( 'init', 'gp_google_translate_init' ) call.
-6. Create a readme.
+3. Double check your GlotPress action/filters names, these have now been prefixed with 'gp_'.
+4. If your using a define() to enable/disable your plugin, remove it, using the activeate/deactivate functionality in WordPress's plugin system is the way to go.
+5. If your using warnings/errors, replace them with the appropriate gp_notice_set() call ( gp_notice_set( $string ) for warnings, gp_notice_set( $string, 'error' ) for errors).
+6. Replace your initalization of the plugin with a add_action( 'init', 'gp_google_translate_init' ) call.
+7. In your init action, make sure GP is loaded before loading your code with a 'if( defined( 'GP_VERSION' ) )' block.
+8. Create a readme.
 

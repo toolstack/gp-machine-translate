@@ -3,7 +3,7 @@
 Plugin Name: GlotPress Google Translate
 Plugin URI: http://glotpress.org/
 Description: Google Translate plugin for GlotPress.
-Version: 0.3
+Version: 0.4
 Author: GlotPress
 Author URI: http://glotpress.org
 Tags: glotpress, glotpress plugin, translate, google 
@@ -41,7 +41,7 @@ class GP_Google_Translate {
 		}
 		
 		// Add the actions to handle adding the translate menu to the various parts of GlotPress.
-		add_action( 'pre_tmpl_load', array( $this, 'gp_pre_tmpl_load'), 10, 2);
+		add_action( 'gp_pre_tmpl_load', array( $this, 'gp_pre_tmpl_load'), 10, 2);
 		add_filter( 'gp_entry_actions', array( $this, 'gp_entry_actions' ), 10, 1 );
 		add_action( 'gp_translation_set_bulk_action', array( $this, 'gp_translation_set_bulk_action'), 10, 1); 
 		add_action( 'gp_translation_set_bulk_action_post', array( $this, 'gp_translation_set_bulk_action_post'), 10, 4);
@@ -474,5 +474,7 @@ add_action( 'init', 'gp_google_translate_init' );
 function gp_google_translate_init() {
 	GLOBAL $gp_google_translate;
 	
-	$gp_google_translate = new GP_Google_Translate;
+	if( defined( 'GP_VERSION' ) ) {
+		$gp_google_translate = new GP_Google_Translate;
+	}
 }
