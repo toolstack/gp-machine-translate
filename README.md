@@ -14,14 +14,4 @@ To set if for a specific user, go to the users profile and scroll down to the "G
 Note, if both a global and user API key are set, the user API key will override the global API key.
 
 # Converstion Notes
-Converting from the standalone GlotPress plugin system to the GlotPress as a WordPress plugin is relativly straight forward.
-
-1. Add a WordPress plugin header block to the top of your plugin file.
-2. Any add_action() or add_filters() calls you have must be converted to the WordPress add_action()/add_filter() format.
-3. Double check your GlotPress action/filters names, these have now been prefixed with 'gp_'.
-4. If your using a define() to enable/disable your plugin, remove it, using the activeate/deactivate functionality in WordPress's plugin system is the way to go.
-5. If your using warnings/errors, replace them with the appropriate gp_notice_set() call ( gp_notice_set( $string ) for warnings, gp_notice_set( $string, 'error' ) for errors).
-6. Replace your initalization of the plugin with a add_action( 'init', 'gp_google_translate_init' ) call.
-7. In your init action, make sure GP is loaded before loading your code with a 'if( defined( 'GP_VERSION' ) )' block.
-8. Create a readme.
-
+See the offical GlotPress [plugin converstion](https://github.com/deliciousbrains/GlotPress/wiki/Converting-Plugins) page for details.
