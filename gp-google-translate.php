@@ -21,7 +21,7 @@ class GP_Google_Translate {
 		$this->key = get_option('gp_google_translate_key');
 		
 		// Check to see if there is a user currently logged in.
-		if (GP::$user->logged_in()) {
+		if ( is_user_logged_in() ) {
 			// If someone is logged in, get their user object.
 			$user_obj = GP::$user->current();
 			
