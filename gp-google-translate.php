@@ -468,13 +468,11 @@ class GP_Google_Translate {
 }
 
 // Add an action to WordPress's init hook to setup the plugin.  Don't just setup the plugin here as the GlotPress plugin may not have loaded yet.
-add_action( 'init', 'gp_google_translate_init' );
+add_action( 'gp_init', 'gp_google_translate_init' );
 
 // This function creates the plugin.
 function gp_google_translate_init() {
 	GLOBAL $gp_google_translate;
 	
-	if( defined( 'GP_VERSION' ) ) {
-		$gp_google_translate = new GP_Google_Translate;
-	}
+	$gp_google_translate = new GP_Google_Translate;
 }
