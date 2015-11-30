@@ -23,7 +23,7 @@ class GP_Google_Translate {
 		// Check to see if there is a user currently logged in.
 		if ( is_user_logged_in() ) {
 			// If someone is logged in, get their user object.
-			$user_obj = GP::$user->current();
+			$user_obj = wp_get_current_user();
 			
 			// Load the user translate key from the WordPress user meta table, using the currently logged in user id.
 			$user_key = get_user_meta( $user_obj->id, 'gp_google_translate_key', true );
@@ -36,7 +36,7 @@ class GP_Google_Translate {
 		if( false === $this->key ) { return; }
 		
 		// If the user has write permissions to the projects, add the bulk tranlsate option to the projects menu.
-		if( GP::$user->current()->can( 'write', 'project' ) ) {
+		if( GP::$permission->user_can( wp_get_current_user(), 'write', 'project' ) ) {
 			add_action( 'gp_project_actions', array( $this, 'gp_project_actions'), 10, 2 );
 		}
 		
@@ -125,7 +125,7 @@ class GP_Google_Translate {
 		$url = gp_url_project( $project_path );
 
 		// If we don't have rights, just redirect back to the project.
-		if( !GP::$user->current()->can( 'write', 'project' ) ) {
+		if( !GP::$permission->user_can( wp_get_current_user(), 'write', 'project' ) ) {
 			gp_redirect( $url );
 		}
 
@@ -298,7 +298,7 @@ class GP_Google_Translate {
 
 			// Build a data array to store
 			$data = compact( 'original_id' );
-			$data['user_id'] = GP::$user->current()->id;
+			$data['user_id'] = wp_get_current_user_id();
 			$data['translation_set_id'] = $translation_set->id;
 			$data['translation_0'] = $translation;
 			$data['status'] = 'fuzzy';
