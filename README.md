@@ -1,4 +1,4 @@
-# GlotPress Google Translate
+# GlotPress Machine Translate
 A Google Translate plugin for [GlotPress as a WordPress plugin](https://github.com/deliciousbrains/GlotPress).
 
 Google translate is a pay service, you must acquire an API key from Google and setup a payment option with them.

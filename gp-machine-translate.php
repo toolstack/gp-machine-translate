@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: GlotPress Google Translate
+Plugin Name: GlotPress Machine Translate
 Plugin URI: http://glotpress.org/
 Description: Google Translate plugin for GlotPress.
 Version: 0.4
@@ -10,14 +10,14 @@ Tags: glotpress, glotpress plugin, translate, google
 License: GPLv2 or later
 */
 
-class GP_Google_Translate {
-	public $id = 'google-translate';
+class GP_Machine_Translate {
+	public $id = 'machine-translate';
 
 	private $key;
 	private $google_code = false;
 
 	public function __construct() {
-		// Get the global translsate key from the WordPress options table.
+		// Get the global translate key from the WordPress options table.
 		$this->key = get_option('gp_google_translate_key');
 		
 		// Check to see if there is a user currently logged in.
@@ -35,7 +35,7 @@ class GP_Google_Translate {
 		// If we didn't find a global or user key, return and don't setup and of the actions.
 		if( false === $this->key ) { return; }
 		
-		// If the user has write permissions to the projects, add the bulk tranlsate option to the projects menu.
+		// If the user has write permissions to the projects, add the bulk translate option to the projects menu.
 		if( GP::$permission->user_can( wp_get_current_user(), 'write', 'project' ) ) {
 			add_action( 'gp_project_actions', array( $this, 'gp_project_actions'), 10, 2 );
 		}
@@ -67,7 +67,7 @@ class GP_Google_Translate {
 		$this->edit_user_profile( $user );
 	}
 	
-	// Genreate the HTML when a user profile is edited.  Note the $user parameter is a full user object for this function.
+	// Generate the HTML when a user profile is edited.  Note the $user parameter is a full user object for this function.
 	public function edit_user_profile( $user ) {
 		// Get the current user key from the WordPress options table.
 		$user_key = get_user_meta( $user->ID, 'gp_google_translate_key', true );
@@ -104,19 +104,19 @@ class GP_Google_Translate {
 		return $this->personal_options_update( $user );
 	}
 	
-	// This funciton adds the "Bulk Google Translate" option to the projects menu.
+	// This function adds the "Bulk Machine Translate" option to the projects menu.
 	public function gp_project_actions( $actions, $project ) {
-		$actions[] .= gp_link_get( gp_url( 'bulk-translate/' . $project->slug), __('Bulk Google Translate') );
+		$actions[] .= gp_link_get( gp_url( 'bulk-translate/' . $project->slug), __('Bulk Machine Translate') );
 		
 		return $actions;
 	}
 	
-	// This function is here as placeholder to support adding the bulk tranlsate opiton to the router.
+	// This function is here as placeholder to support adding the bulk translate option to the router.
 	// Without this placeholder there is a fatal error generated.
 	public function before_request() {
 	}
 
-	// This function handles the actaul bulk translate as passed in by the router for the projects menu.
+	// This function handles the actual bulk translate as passed in by the router for the projects menu.
 	public function bulk_translate( $project_path ) {
 		// First let's ensure we have decoded the project path for use later.
 		$project_path = urldecode( $project_path );
@@ -165,7 +165,7 @@ class GP_Google_Translate {
 		gp_redirect( $url );
 	}
 
-	// This function is here as placeholder to support adding the bulk tranlsate opiton to the router.
+	// This function is here as placeholder to support adding the bulk translate option to the router.
 	// Without this placeholder there is a fatal error generated.
 	public function after_request() {
 	}
@@ -197,15 +197,15 @@ class GP_Google_Translate {
 		$this->google_code = $args['locale']->google_code;
 
 		// Enqueue the translation JavaScript and translate it.
-		wp_enqueue_script( 'gp-google-translate', plugins_url( 'gp-google-translate.js', __FILE__ ), array( 'jquery', 'editor' ) );
-		wp_localize_script( 'gp-google-translate', 'gp_google_translate', $options );
+		wp_enqueue_script( 'gp-machine-translate', plugins_url( 'gp-machine-translate.js', __FILE__ ), array( 'jquery', 'editor' ) );
+		wp_localize_script( 'gp-machine-translate', 'gp_machine_translate', $options );
 	}
 
-	// This function adds the "Translation from Google" to the individual translation items.
+	// This function adds the "Translation via Machine Translate" to the individual translation items.
 	public function gp_entry_actions( $actions ) {
 		// Make sure we are currently on a supported locale.
 		if ( $this->google_code ) {
-			$actions[] = '<a href="#" class="gtranslate" tabindex="-1">' . __('Translation from Google') . '</a>';
+			$actions[] = '<a href="#" class="gtranslate" tabindex="-1">' . __('Translation via Machine Translate') . '</a>';
 		}
 
 		return $actions;
@@ -254,7 +254,7 @@ class GP_Google_Translate {
 			// Get the original based on the above id.
 			$original    = GP::$original->get( $original_id );
 
-			// If there is no orginal or it's a plural, skip it.
+			// If there is no original or it's a plural, skip it.
 			if ( ! $original || $original->plural ) {
 				$skipped++;
 				continue;
@@ -265,7 +265,7 @@ class GP_Google_Translate {
 			$original_ids[] = $original_id;
 		}
 
-		// Translate all the original's that we found.
+		// Translate all the originals that we found.
 		$results = $this->google_translate_batch( $locale, $singulars );
 
 		// Did we get an error?
@@ -309,7 +309,7 @@ class GP_Google_Translate {
 			$inserted? $ok++ : $insert_errors++;
 		}
 
-		// Did we get an erorr?  If so let's let the user know about them.
+		// Did we get an error?  If so let's let the user know about them.
 		if ( $google_errors > 0 || $insert_errors > 0 ) {
 			// Create a message array to use later.
 			$message = array();
@@ -338,14 +338,14 @@ class GP_Google_Translate {
 			gp_notice_set( implode( '', $message ), 'error' );
 		}
 		else {
-			// If we didn't get any errors, then we just need to let the user know how many tranlsations were added.
+			// If we didn't get any errors, then we just need to let the user know how many translations were added.
 			gp_notice_set( sprintf( __('%d fuzzy translation from Google Translate were added.' ), $ok ) );
 		}
 	}
 
 	// This function contacts Google and translate a set of strings.
 	public function google_translate_batch( $locale, $strings ) {
-		// If we don't have a supported Google tranlsation code, throw an error.
+		// If we don't have a supported Google translation code, throw an error.
 		if ( ! $locale->google_code ) {
 			return new WP_Error( 'google_translate', sprintf( "The locale %s isn't supported by Google Translate.", $locale->slug ) );
 		}
@@ -353,7 +353,7 @@ class GP_Google_Translate {
 		// This is the URL of the Google API.
 		$url = 'https://www.googleapis.com/language/translate/v2?key=' . $this->key . '&source=en&target=' . urlencode( $locale->google_code );
 
-		// Loop through the stirngs and add them to the $url as a query string.
+		// Loop through the stings and add them to the $url as a query string.
 		foreach ( $strings as $string ) {
 			$url .= '&q=' . urlencode( $string );
 		}
@@ -420,20 +420,20 @@ class GP_Google_Translate {
 	
 	// This function adds the admin settings page to WordPress.
 	public function admin_menu() {
-		add_options_page( __('GlotPress Google Translate'), __('GlotPress Google Translate'), 'manage_options', basename( __FILE__ ), array( $this, 'admin_page' ) );
+		add_options_page( __('GlotPress Machine Translate'), __('GlotPress Machine Translate'), 'manage_options', basename( __FILE__ ), array( $this, 'admin_page' ) );
 	}
 	
 	// This function displays the admin settings page in WordPress.
 	public function admin_page() {
-		// If the current user can't manage options, display a message and return immediatly.
+		// If the current user can't manage options, display a message and return immediately.
 		if( ! current_user_can( 'manage_options' ) ) { _e('You do not have permissions to this page!'); return; }
 		
 		// If the user has saved the settings, commit them to the database.
 		if( array_key_exists( 'save_gp_google_transalate', $_POST ) ) {
-			// Flush the gloabl key, in case the user is removing the API key.
+			// Flush the global key, in case the user is removing the API key.
 			$this->key = '';
 			
-			// If the API key value is being aved, store it in the global key setting.
+			// If the API key value is being saved, store it in the global key setting.
 			if( array_key_exists( 'gp_google_translate_key', $_POST ) ) {
 				// Make sure to sanitize the data before saving it.
 				$this->key = sanitize_text_field( $_POST['gp_google_translate_key'] );
@@ -445,9 +445,9 @@ class GP_Google_Translate {
 
 	?>	
 <div class="wrap">
-	<h2><?php _e('GlotPress Google Translate Settings');?></h2>
+	<h2><?php _e('GlotPress Machine Translate Settings');?></h2>
 
-	<form method="post" action="options-general.php?page=gp-google-translate.php" >	
+	<form method="post" action="options-general.php?page=gp-machine-translate.php" >	
 		<table class="form-table">
 			<tr>
 				<th><label for="gp_google_translate_key"><?php _e('Global Google API Key');?></label></th>
@@ -468,11 +468,11 @@ class GP_Google_Translate {
 }
 
 // Add an action to WordPress's init hook to setup the plugin.  Don't just setup the plugin here as the GlotPress plugin may not have loaded yet.
-add_action( 'gp_init', 'gp_google_translate_init' );
+add_action( 'gp_init', 'gp_machine_translate_init' );
 
 // This function creates the plugin.
-function gp_google_translate_init() {
-	GLOBAL $gp_google_translate;
+function gp_machine_translate_init() {
+	GLOBAL $gp_machine_translate;
 	
-	$gp_google_translate = new GP_Google_Translate;
+	$gp_machine_translate = new GP_Machine_Translate;
 }
