@@ -35,6 +35,8 @@ class GP_Machine_Translate {
 		// If we didn't find a global or user key, return and don't setup and of the actions.
 		if( false === $this->key ) { return; }
 		
+		wp_register_script( 'gp-machine-translate-js', plugins_url( 'gp-machine-translate.js', __FILE__ ), array( 'jquery', 'editor', 'gp-common' ) );
+		
 		// If the user has write permissions to the projects, add the bulk translate option to the projects menu.
 		if( GP::$permission->user_can( wp_get_current_user(), 'write', 'project' ) ) {
 			add_action( 'gp_project_actions', array( $this, 'gp_project_actions'), 10, 2 );
@@ -197,8 +199,8 @@ class GP_Machine_Translate {
 		$this->google_code = $args['locale']->google_code;
 
 		// Enqueue the translation JavaScript and translate it.
-		wp_enqueue_script( 'gp-machine-translate', plugins_url( 'gp-machine-translate.js', __FILE__ ), array( 'jquery', 'editor' ) );
-		wp_localize_script( 'gp-machine-translate', 'gp_machine_translate', $options );
+		gp_enqueue_script( 'gp-machine-translate-js' );
+		wp_localize_script( 'gp-machine-translate-js', 'gp_machine_translate', $options );
 	}
 
 	// This function adds the "Translation via Machine Translate" to the individual translation items.
@@ -211,11 +213,11 @@ class GP_Machine_Translate {
 		return $actions;
 	}
 
-	// This function adds the "Translate via Google" to the bulk actions dropdown in the translation set list.
+	// This function adds the "Translate via Machine Translate" to the bulk actions dropdown in the translation set list.
 	public function gp_translation_set_bulk_action() {
 		// Make sure we are currently on a supported locale.
 		if ( $this->google_code ) {
-			echo '<option value="gtranslate">' . __('Translate via Google') . '</option>';
+			echo '<option value="gtranslate">' . __('Translate via Machine Translate') . '</option>';
 		}
 	}
 
