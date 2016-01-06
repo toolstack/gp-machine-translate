@@ -50,7 +50,7 @@ fi
 # Disable error trapping and then check if it already exist in SVN.
 set +e
 
-svn info "$PLUGINSVN/tags/$VERSION"
+svn info "$PLUGINSVN/tags/$VERSION" > /dev/null 2>&1
 if (( $? == 0 )); then
 	echo "Tag already exists in SVN!"
 	cd "$PLUGINDIR$INBIN"
