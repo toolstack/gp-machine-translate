@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: GlotPress Machine Translate
+Plugin Name: GP Machine Translate
 Plugin URI: http://glot-o-matic.com/gp-machine-translate
 Description: Google Translate plugin for GlotPress.
-Version: 0.5
+Version: 0.6
 Author: gregross
 Author URI: http://toolstack.com
 Tags: glotpress, glotpress plugin, translate, google 
@@ -12,7 +12,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 class GP_Machine_Translate {
-	public $id = 'machine-translate';
+	public $id = 'gp-machine-translate';
 
 	private $key;
 	private $google_code = false;
