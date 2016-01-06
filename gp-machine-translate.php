@@ -78,7 +78,7 @@ class GP_Machine_Translate {
 		// If the user cannot edit their profile, then don't show the settings.
 		if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
 ?>
-	<h3 id="gp-google-translate"><?php _e('GlotPress Google Translate'); ?></h3>
+	<h3 id="gp-google-translate"><?php _e('GP Google Translate'); ?></h3>
 	<table class="form-table">
 		<tr>
 			<th><label for="gp_google_translate_user_key"><?php _e('User Google API Key');?></label></th>
@@ -428,7 +428,7 @@ class GP_Machine_Translate {
 	
 	// This function adds the admin settings page to WordPress.
 	public function admin_menu() {
-		add_options_page( __('GlotPress Machine Translate'), __('GlotPress Machine Translate'), 'manage_options', basename( __FILE__ ), array( $this, 'admin_page' ) );
+		add_options_page( __('GP Machine Translate'), __('GP Machine Translate'), 'manage_options', basename( __FILE__ ), array( $this, 'admin_page' ) );
 	}
 	
 	// This function displays the admin settings page in WordPress.
@@ -453,7 +453,7 @@ class GP_Machine_Translate {
 
 	?>	
 <div class="wrap">
-	<h2><?php _e('GlotPress Machine Translate Settings');?></h2>
+	<h2><?php _e('GP Machine Translate Settings');?></h2>
 
 	<form method="post" action="options-general.php?page=gp-machine-translate.php" >	
 		<table class="form-table">
