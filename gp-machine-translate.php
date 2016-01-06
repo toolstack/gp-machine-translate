@@ -129,7 +129,7 @@ class GP_Machine_Translate {
 
 		// If we don't have rights, just redirect back to the project.
 		if( !GP::$permission->user_can( wp_get_current_user(), 'write', 'project' ) ) {
-			gp_redirect( $url );
+			wp_redirect( $url );
 		}
 
 		// Create a project class to use to get the project object.
@@ -165,7 +165,7 @@ class GP_Machine_Translate {
 		}
 
 		// Redirect back to the project home.
-		gp_redirect( $url );
+		wp_redirect( $url );
 	}
 
 	// This function is here as placeholder to support adding the bulk translate option to the router.
@@ -301,7 +301,7 @@ class GP_Machine_Translate {
 
 			// Build a data array to store
 			$data = compact( 'original_id' );
-			$data['user_id'] = wp_get_current_user_id();
+			$data['user_id'] = get_current_user_id();
 			$data['translation_set_id'] = $translation_set->id;
 			$data['translation_0'] = $translation;
 			$data['status'] = 'fuzzy';
@@ -353,6 +353,11 @@ class GP_Machine_Translate {
 			return new WP_Error( 'google_translate', sprintf( "The locale %s isn't supported by Google Translate.", $locale->slug ) );
 		}
 
+		// If we don't have any strings, throw an error.
+		if ( count( $strings ) == 0 ) {
+			return new WP_Error( 'google_translate', "No strings found to translate." );
+		}
+		
 		// This is the URL of the Google API.
 		$url = 'https://www.googleapis.com/language/translate/v2?key=' . $this->key . '&source=en&target=' . urlencode( $locale->google_code );
 
@@ -379,11 +384,11 @@ class GP_Machine_Translate {
 
 		// If something went wrong with the response from Google, throw an error.
 		if ( ! $json ) {
-			return new WP_Error( 'google_translate', 'Error decoding JSON from Google Translate.' );
+			return new WP_Error( 'machine_translate', 'Error decoding JSON from Google Translate.' );
 		}
 
 		if ( isset( $json->error ) ) {
-			return new WP_Error( 'google_translate', sprintf( 'Error auto-translating: %1$s', $json->error->errors[0]->message ) );
+			return new WP_Error( 'machine_translate', sprintf( 'Error auto-translating: %1$s', $json->error->errors[0]->message ) );
 		}
 
 		// Setup an temporary array to use to process the response.
@@ -399,7 +404,7 @@ class GP_Machine_Translate {
 
 		// If there are no items, throw an error.
 		if ( ! $items ) {
-			return new WP_Error( 'google_translate', 'Error merging arrays' );
+			return new WP_Error( 'machine_translate', 'Error merging arrays' );
 		}
 
 		// Loop through the items and clean up the responses.
