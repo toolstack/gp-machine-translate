@@ -18,6 +18,15 @@ class GP_Machine_Translate {
 	private $google_code = false;
 
 	public function __construct() {
+		// Handle the WordPress user profile items
+		add_action( 'show_user_profile', array( $this, 'show_user_profile' ), 10, 1 );
+		add_action( 'edit_user_profile', array( $this, 'edit_user_profile' ), 10, 1 );
+		add_action( 'personal_options_update', array( $this, 'personal_options_update' ), 10, 1 );
+		add_action( 'edit_user_profile_update', array( $this, 'edit_user_profile_update' ), 10, 1 );
+		
+		// Add the admin page to the WordPress settings menu.
+		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10, 1 );
+
 		// Get the global translate key from the WordPress options table.
 		$this->key = get_option('gp_google_translate_key');
 		
@@ -48,15 +57,6 @@ class GP_Machine_Translate {
 		add_filter( 'gp_entry_actions', array( $this, 'gp_entry_actions' ), 10, 1 );
 		add_action( 'gp_translation_set_bulk_action', array( $this, 'gp_translation_set_bulk_action'), 10, 1); 
 		add_action( 'gp_translation_set_bulk_action_post', array( $this, 'gp_translation_set_bulk_action_post'), 10, 4);
-
-		// Handle the WordPress user profile items
-		add_action( 'show_user_profile', array( $this, 'show_user_profile' ), 10, 1 );
-		add_action( 'edit_user_profile', array( $this, 'edit_user_profile' ), 10, 1 );
-		add_action( 'personal_options_update', array( $this, 'personal_options_update' ), 10, 1 );
-		add_action( 'edit_user_profile_update', array( $this, 'edit_user_profile_update' ), 10, 1 );
-		
-		// Add the admin page to the WordPress settings menu.
-		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10, 1 );
 
 		// We can't use the filter in the defaults route code because plugins don't load until after
 		// it has already run, so instead add the routes directly to the global GP_Router object.
