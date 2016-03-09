@@ -14,4 +14,4 @@ To set if for a specific user, go to the users profile and scroll down to the "G
 Note, if both a global and user API key are set, the user API key will override the global API key.
 
 # Conversion Notes
-See the official GlotPress [plugin conversion](https://github.com/deliciousbrains/GlotPress/wiki/Converting-Plugins) page for details.
+See the official GlotPress [plugin conversion](https://github.com/GlotPress/GlotPress-WP/wiki/1.2-Converting-Plugins) page for details.
