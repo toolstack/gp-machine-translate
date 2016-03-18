@@ -1,3 +1,7 @@
+## 0.7
+* Release date: January 6, 2016
+* Documentation update.
+
 ## 0.6
 * Release date: January 6, 2016
 * Move the WP profile and settings hooks to before we check for the Google API key, otherwise you can never add one.

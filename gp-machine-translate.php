@@ -3,8 +3,8 @@
 Plugin Name: GP Machine Translate
 Plugin URI: http://glot-o-matic.com/gp-machine-translate
 Description: Google Translate plugin for GlotPress.
-Version: 0.6
-Author: gregross
+Version: 0.7
+Author: Greg Ross
 Author URI: http://toolstack.com
 Tags: glotpress, glotpress plugin, translate, google 
 License: GPLv2
