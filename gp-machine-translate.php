@@ -36,7 +36,7 @@ class GP_Machine_Translate {
 			$user_obj = wp_get_current_user();
 			
 			// Load the user translate key from the WordPress user meta table, using the currently logged in user id.
-			$user_key = get_user_meta( $user_obj->id, 'gp_google_translate_key', true );
+			$user_key = get_user_meta( $user_obj->ID, 'gp_google_translate_key', true );
 			
 			// If there is a user key, override the global key.
 			if( $user_key ) { $this->key = $user_key; }
@@ -139,7 +139,7 @@ class GP_Machine_Translate {
 		$project_obj = $project_class->by_path( $project_path );
 		
 		// Get the translations sets from the project ID.
-		$translation_sets = GP::$translation_set->by_project_id( $project_obj->id );
+		$translation_sets = GP::$translation_set->by_project_id( $project_obj->ID );
 
 		// Loop through all the sets.
 		foreach( $translation_sets as $set ) {
