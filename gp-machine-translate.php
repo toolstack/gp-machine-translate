@@ -6,7 +6,7 @@ Description: Machine Translate plugin for GlotPress.
 Version: 0.8
 Author: Greg Ross
 Author URI: http://toolstack.com
-Tags: glotpress, glotpress plugin, translate, google, bing, badiu
+Tags: glotpress, glotpress plugin, translate, google, bing, yandex
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
@@ -16,9 +16,10 @@ class GP_Machine_Translate {
 
 	private $version = '0.8';
 	private $key;
-	private $google_code = false;
+	private $provider_code = false;
 	private $provider;
 	private	$providers;
+	private $locales;
 	
 	public function __construct() {
 		// Handle the WordPress user profile items
@@ -30,18 +31,23 @@ class GP_Machine_Translate {
 		// Add the admin page to the WordPress settings menu.
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10, 1 );
 
-		$this->providers = array( 'Badiu', 'Bing', 'Google' );
+		$this->providers = array( 'Yandex', 'Bing', 'Google' );
+		$provider_includes = array( 'Yandex' => 'yandex.locales.php', 'Bing' => 'bing.locales.php', 'Google' => 'google.locales.php' );
 
 		if( get_option( 'gp_machine_translate_version', '0.7' ) != $this->version ) {
 			$this->upgrade();
 		}
 		
-		// Get the global translate key from the WordPress options table.
-		$this->provider = get_option('gp_machine_translate_provider');
+		// Get the global translate provider from the WordPress options table.
+		$this->provider = get_option( 'gp_machine_translate_provider' );
 
 		// Get the global translate key from the WordPress options table.
 		$this->key = get_option('gp_machine_translate_key');
+	
+		include_once( $provider_includes[$this->provider] );
 		
+		$this->locales = $gp_machine_translate_locales;
+	
 		// Check to see if there is a user currently logged in.
 		if ( is_user_logged_in() ) {
 			// If someone is logged in, get their user object.
@@ -197,20 +203,20 @@ class GP_Machine_Translate {
 			return;
 		}
 
-		// If the current locale isn't supported by Google Translate, just return without doing anything.
-		if ( ! $args['locale']->google_code ) {
+		// If the current locale isn't supported by the translation provider, just return without doing anything.
+		if ( ! array_key_exists( $args['locale']->slug, $this->locales ) ) {
 			return;
 		}
 
 		// Create options for the localization script.
 		$options = array(
 			'key'     => $this->key,
-			'locale'  => $args['locale']->google_code,
+			'locale'  => $this->locales[$args['locale']->slug],
 			'ajaxurl' => admin_url( 'admin-ajax.php'),
 		);
 		
 		// Set the current Google code to the locale we're dealing with.
-		$this->google_code = $args['locale']->google_code;
+		$this->provider_code = $this->locales[$args['locale']->slug];
 
 		// Enqueue the translation JavaScript and translate it.
 		gp_enqueue_script( 'gp-machine-translate-js' );
@@ -220,7 +226,7 @@ class GP_Machine_Translate {
 	// This function adds the "Translation via Machine Translate" to the individual translation items.
 	public function gp_entry_actions( $actions ) {
 		// Make sure we are currently on a supported locale.
-		if ( $this->google_code ) {
+		if ( $this->provider_code ) {
 			$actions[] = '<a href="#" class="gtranslate" tabindex="-1">' . __('Translation via Machine Translate') . '</a>';
 		}
 
@@ -230,7 +236,7 @@ class GP_Machine_Translate {
 	// This function adds the "Translate via Machine Translate" to the bulk actions dropdown in the translation set list.
 	public function gp_translation_set_bulk_action() {
 		// Make sure we are currently on a supported locale.
-		if ( $this->google_code ) {
+		if ( $this->provider_code ) {
 			echo '<option value="gtranslate">' . __('Translate via Machine Translate') . '</option>';
 		}
 	}
@@ -248,7 +254,7 @@ class GP_Machine_Translate {
 		}
 		
 		// Setup some variables to be used during the translation.
-		$google_errors = 0;
+		$provider_errors = 0;
 		$insert_errors = 0;
 		$ok      = 0;
 		$skipped = 0;
@@ -307,7 +313,7 @@ class GP_Machine_Translate {
 
 			// Did we get an error?
 			if ( is_wp_error( $translation ) ) {
-				$google_errors++;
+				$provider_errors++;
 				error_log( $translation->get_error_message() );
 				continue;
 			}
@@ -326,7 +332,7 @@ class GP_Machine_Translate {
 		}
 
 		// Did we get an error?  If so let's let the user know about them.
-		if ( $google_errors > 0 || $insert_errors > 0 ) {
+		if ( $provider_errors > 0 || $insert_errors > 0 ) {
 			// Create a message array to use later.
 			$message = array();
 
@@ -335,9 +341,9 @@ class GP_Machine_Translate {
 				$message[] = sprintf( __('Added: %d.' ), $ok );
 			}
 
-			// Did we have any Google errors.
-			if ( $google_errors ) {
-				$message[] = sprintf( __('Error from Google Translate: %d.' ), $google_errors );
+			// Did we have any provider errors.
+			if ( $provider_errors ) {
+				$message[] = sprintf( __('Error from %s Translate: %d.' ), $this->provider, $provider_errors );
 			}
 
 			// Did we have any errors when we saved everything to the database?
@@ -369,12 +375,8 @@ class GP_Machine_Translate {
 				return bing_translate_batch( $locale, $strings );
 				
 				break;
-			case 'badiu':
-				return badiu_translate_batch( $locale, $strings );
-				
-				break;
-			default:
-				return 'Error: no translation service selected.';
+			case 'yandex':
+				return yandex_translate_batch( $locale, $strings );
 				
 				break;
 		}
@@ -384,24 +386,91 @@ class GP_Machine_Translate {
 		
 	}
 
-	private function badiu_translate_batch( $locale, $strings ) {
+	private function yandex_translate_batch( $locale, $strings ) {
+		// If we don't have a supported Yandex translation code, throw an error.
+		if ( ! array_key_exists( $locale->slug, $this->locales ) ) {
+			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s Translate.", $locale->slug, $this->provider ) );
+		}
+
+		// If we don't have any strings, throw an error.
+		if ( count( $strings ) == 0 ) {
+			return new WP_Error( 'gp_machine_translate', "No strings found to translate." );
+		}
 		
+		// This is the URL of the Yandex API.
+		$url = 'ttps://translate.yandex.net/api/v1.5/tr.json/translate?key=' . $this->key . '&translation direction=en-' . urlencode( $this->locales[$locale->slug] );
+
+		// Loop through the stings and add them to the $url as a query string.
+		foreach ( $strings as $string ) {
+			$url .= '&text to translate=' . urlencode( $string );
+		}
+
+		// If we just have a single string, add an extra q= to the end so Yandex things we're doing multiple strings.
+		if ( count( $strings ) == 1 ) {
+			$url .= '&text to translate=';
+		}
+
+		// Get the response from Yandex.
+		$response = wp_remote_get( $url );
+
+		// Did we get an error?
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		// Decode the response from Yandex.
+		$json = json_decode( wp_remote_retrieve_body( $response ) );
+
+		// If something went wrong with the response from Yandex, throw an error.
+		if ( ! $json ) {
+			return new WP_Error( 'machine_translate', 'Error decoding JSON from Google Translate.' );
+		}
+
+		if ( isset( $json->error ) ) {
+			return new WP_Error( 'machine_translate', sprintf( 'Error auto-translating: %1$s', $json->error->errors[0]->message ) );
+		}
+
+		// Setup an temporary array to use to process the response.
+		$translations = array();
+
+		// If the translations have been return as a single entry, make it an array so it's easier to process later.
+		if ( ! is_array( $json->data->translations ) ) {
+			$json->data->translations = array( $json->data->translations );
+		}
+
+		// Merge the originals and translations arrays.
+		$items = gp_array_zip( $strings, $json->data->translations );
+
+		// If there are no items, throw an error.
+		if ( ! $items ) {
+			return new WP_Error( 'machine_translate', 'Error merging arrays' );
+		}
+
+		// Loop through the items and clean up the responses.
+		foreach ( $items as $item ) {
+			list( $string, $translation ) = $item;
+
+			$translations[] = $this->google_translate_fix( $translation->translatedText );
+		}
+
+		// Return the results.
+		return $translations;
 	}
 	
 	// This function contacts Google and translate a set of strings.
 	private function google_translate_batch( $locale, $strings ) {
 		// If we don't have a supported Google translation code, throw an error.
-		if ( ! $locale->google_code ) {
-			return new WP_Error( 'google_translate', sprintf( "The locale %s isn't supported by Google Translate.", $locale->slug ) );
+		if ( ! array_key_exists( $locale->slug, $this->locales ) ) {
+			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s Translate.", $locale->slug, $this->provider ) );
 		}
 
 		// If we don't have any strings, throw an error.
 		if ( count( $strings ) == 0 ) {
-			return new WP_Error( 'google_translate', "No strings found to translate." );
+			return new WP_Error( 'gp_machine_translate', "No strings found to translate." );
 		}
 		
 		// This is the URL of the Google API.
-		$url = 'https://www.googleapis.com/language/translate/v2?key=' . $this->key . '&source=en&target=' . urlencode( $locale->google_code );
+		$url = 'https://www.googleapis.com/language/translate/v2?key=' . $this->key . '&source=en&target=' . urlencode( $this->locales[$locale->slug] );
 
 		// Loop through the stings and add them to the $url as a query string.
 		foreach ( $strings as $string ) {
@@ -461,7 +530,7 @@ class GP_Machine_Translate {
 	}
 
 	// This function cleans up the results from Google.
-	public function google_translate_fix( $string ) {
+	private function google_translate_fix( $string ) {
 		$string = preg_replace_callback( '/% (s|d)/i', function ($m) { return '"%".strtolower($m[1])'; }, $string );
 		$string = preg_replace_callback( '/% (\d+) \$ (s|d)/i', function ($m) { return '"%".$m[1]."\\$".strtolower($m[2])'; }, $string );
 		
@@ -511,7 +580,7 @@ class GP_Machine_Translate {
 				<td>
 				<select id="gp_machine_translate_provider" name="gp_machine_translate_provider">
 					<option value="">*Select*</option>
-					<option value="Badiu"<?php if( $this->provider == 'Badiu' ) { echo " selected"; }?>>Badiu</option>
+					<option value="Yandex"<?php if( $this->provider == 'Yandex' ) { echo " selected"; }?>>Yandex</option>
 					<option value="Bing"<?php if( $this->provider == 'Bing' ) { echo " selected"; }?>>Bing</option>
 					<option value="Google"<?php if( $this->provider == 'Google' ) { echo " selected"; }?>>Google</option>
 				</select>
