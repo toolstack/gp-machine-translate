@@ -4,15 +4,18 @@
 function gp_machine_translate_action_callback() {
 	GLOBAL $gp_machine_translate; 
 
-	if( ! is_set( $gp_machine_translsate ) ) {
-		wp_die();
+	if( ! isset( $gp_machine_translate ) ) {
+		wp_send_json( array( 'success' => false, 'message' => 'GlotPress not yet loaded.' ) );
 	}
 
-	$translations = array( 'translatedText' => 'text' );
+	$locale = $_POST['locale'];
+	$strings = array( $_POST['original'] );
 	
-	echo json_encode( $translations );
+	$new_string = $gp_machine_translate->translate_batch( $locale, $strings );
 	
-	wp_die(); // this is required to terminate immediately and return a proper response
+	$translations = array( 'success' => true, 'data' => array( 'translatedText' => $new_string ) );
+	
+	wp_send_json( $translations );
 }
 add_action( 'wp_ajax_gp_machine_translate', 'gp_machine_translate_action_callback' );
 

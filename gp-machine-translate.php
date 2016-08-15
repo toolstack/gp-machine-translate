@@ -2,11 +2,11 @@
 /*
 Plugin Name: GP Machine Translate
 Plugin URI: http://glot-o-matic.com/gp-machine-translate
-Description: Google Translate plugin for GlotPress.
-Version: 0.7
+Description: Machine Translate plugin for GlotPress.
+Version: 0.8
 Author: Greg Ross
 Author URI: http://toolstack.com
-Tags: glotpress, glotpress plugin, translate, google 
+Tags: glotpress, glotpress plugin, translate, google, bing, badiu
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
@@ -14,9 +14,12 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 class GP_Machine_Translate {
 	public $id = 'gp-machine-translate';
 
+	private $version = '0.8';
 	private $key;
 	private $google_code = false;
-
+	private $provider;
+	private	$providers;
+	
 	public function __construct() {
 		// Handle the WordPress user profile items
 		add_action( 'show_user_profile', array( $this, 'show_user_profile' ), 10, 1 );
@@ -27,8 +30,17 @@ class GP_Machine_Translate {
 		// Add the admin page to the WordPress settings menu.
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10, 1 );
 
+		$this->providers = array( 'Badiu', 'Bing', 'Google' );
+
+		if( get_option( 'gp_machine_translate_version', '0.7' ) != $this->version ) {
+			$this->upgrade();
+		}
+		
 		// Get the global translate key from the WordPress options table.
-		$this->key = get_option('gp_google_translate_key');
+		$this->provider = get_option('gp_machine_translate_provider');
+
+		// Get the global translate key from the WordPress options table.
+		$this->key = get_option('gp_machine_translate_key');
 		
 		// Check to see if there is a user currently logged in.
 		if ( is_user_logged_in() ) {
@@ -36,7 +48,7 @@ class GP_Machine_Translate {
 			$user_obj = wp_get_current_user();
 			
 			// Load the user translate key from the WordPress user meta table, using the currently logged in user id.
-			$user_key = get_user_meta( $user_obj->ID, 'gp_google_translate_key', true );
+			$user_key = get_user_meta( $user_obj->ID, 'gp_machine_translate_key', true );
 			
 			// If there is a user key, override the global key.
 			if( $user_key ) { $this->key = $user_key; }
@@ -73,18 +85,18 @@ class GP_Machine_Translate {
 	// Generate the HTML when a user profile is edited.  Note the $user parameter is a full user object for this function.
 	public function edit_user_profile( $user ) {
 		// Get the current user key from the WordPress options table.
-		$user_key = get_user_meta( $user->ID, 'gp_google_translate_key', true );
+		$user_key = get_user_meta( $user->ID, 'gp_machine_translate_key', true );
 		
 		// If the user cannot edit their profile, then don't show the settings.
 		if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
 ?>
-	<h3 id="gp-google-translate"><?php _e('GP Google Translate'); ?></h3>
+	<h3 id="gp-machine-translate"><?php _e('GP Machine Translate'); ?></h3>
 	<table class="form-table">
 		<tr>
-			<th><label for="gp_google_translate_user_key"><?php _e('User Google API Key');?></label></th>
+			<th><label for="gp_machine_translate_user_key"><?php _e('User API Key');?></label></th>
 			<td>
-			<input type="text" id="gp_google_translate_user_key" name="gp_google_translate_user_key" size="40" value="<?php echo htmlentities($user_key);?>">
-			<p class="description"><?php _e('Enter the Google API key for this user.');?></p>
+			<input type="text" id="gp_machine_translate_user_key" name="gp_machine_translate_user_key" size="40" value="<?php echo htmlentities( $user_key );?>">
+			<p class="description"><?php printf( __( 'Enter the %s API key for this user.' ), $this->provider );?></p>
 			</td>
 		</tr>
 	</table>
@@ -98,7 +110,7 @@ class GP_Machine_Translate {
 		if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
 		
 		// Unlike the profile edit function, we only get the user id passed in as a parameter.
-		update_user_meta( $user_id, 'gp_google_translate_key', sanitize_text_field( $_POST['gp_google_translate_user_key'] ) );
+		update_user_meta( $user_id, 'gp_machine_translate_key', sanitize_text_field( $_POST['gp_machine_translate_user_key'] ) );
 	}
 
 	// Once a user profile has been edited, this function saves the settings to the WordPress options table.
@@ -192,8 +204,9 @@ class GP_Machine_Translate {
 
 		// Create options for the localization script.
 		$options = array(
-			'key'    => $this->key,
-			'locale' => $args['locale']->google_code
+			'key'     => $this->key,
+			'locale'  => $args['locale']->google_code,
+			'ajaxurl' => admin_url( 'admin-ajax.php'),
 		);
 		
 		// Set the current Google code to the locale we're dealing with.
@@ -269,7 +282,7 @@ class GP_Machine_Translate {
 		}
 
 		// Translate all the originals that we found.
-		$results = $this->google_translate_batch( $locale, $singulars );
+		$results = $this->translate_batch( $locale, $singulars );
 
 		// Did we get an error?
 		if ( is_wp_error( $results ) ) {
@@ -342,12 +355,41 @@ class GP_Machine_Translate {
 		}
 		else {
 			// If we didn't get any errors, then we just need to let the user know how many translations were added.
-			gp_notice_set( sprintf( __('%d fuzzy translation from Google Translate were added.' ), $ok ) );
+			gp_notice_set( sprintf( __('%d fuzzy translation from Machine Translate were added.' ), $ok ) );
 		}
 	}
 
+	public function translate_batch( $locale, $strings ) {
+		switch( $this->provider ) {
+			case 'google':
+				return google_translate_batch( $locale, $strings );
+				
+				break;
+			case 'bing':
+				return bing_translate_batch( $locale, $strings );
+				
+				break;
+			case 'badiu':
+				return badiu_translate_batch( $locale, $strings );
+				
+				break;
+			default:
+				return 'Error: no translation service selected.';
+				
+				break;
+		}
+	}
+	
+	private function bing_translate_batch( $locale, $strings ) {
+		
+	}
+
+	private function badiu_translate_batch( $locale, $strings ) {
+		
+	}
+	
 	// This function contacts Google and translate a set of strings.
-	public function google_translate_batch( $locale, $strings ) {
+	private function google_translate_batch( $locale, $strings ) {
 		// If we don't have a supported Google translation code, throw an error.
 		if ( ! $locale->google_code ) {
 			return new WP_Error( 'google_translate', sprintf( "The locale %s isn't supported by Google Translate.", $locale->slug ) );
@@ -437,20 +479,27 @@ class GP_Machine_Translate {
 		if( ! current_user_can( 'manage_options' ) ) { _e('You do not have permissions to this page!'); return; }
 		
 		// If the user has saved the settings, commit them to the database.
-		if( array_key_exists( 'save_gp_google_transalate', $_POST ) ) {
+		if( array_key_exists( 'save_gp_machine_transalate', $_POST ) ) {
 			// Flush the global key, in case the user is removing the API key.
 			$this->key = '';
 			
 			// If the API key value is being saved, store it in the global key setting.
-			if( array_key_exists( 'gp_google_translate_key', $_POST ) ) {
+			if( array_key_exists( 'gp_machine_translate_key', $_POST ) ) {
 				// Make sure to sanitize the data before saving it.
-				$this->key = sanitize_text_field( $_POST['gp_google_translate_key'] );
+				$this->key = sanitize_text_field( $_POST['gp_machine_translate_key'] );
 			}	
 			
+			$provider = $_POST['gp_machine_translate_provider'];
+			
+			if( $provider != '*Select*' && in_array( $provider, $this->providers ) ) {
+				update_option( 'gp_machine_translate_provider', $provider );
+				$this->provider = $provider;
+			}
+			
 			// Update the option in the database.
-			update_option( 'gp_google_translate_key', $this->key );
+			update_option( 'gp_machine_translate_key', $this->key );
 		}
-
+		
 	?>	
 <div class="wrap">
 	<h2><?php _e('GP Machine Translate Settings');?></h2>
@@ -458,20 +507,53 @@ class GP_Machine_Translate {
 	<form method="post" action="options-general.php?page=gp-machine-translate.php" >	
 		<table class="form-table">
 			<tr>
-				<th><label for="gp_google_translate_key"><?php _e('Global Google API Key');?></label></th>
+				<th><label for="gp_machine_translate_provider"><?php _e('Translation Provider');?></label></th>
 				<td>
-				<input type="text" id="gp_google_translate_key" name="gp_google_translate_key" size="40" value="<?php echo htmlentities($this->key);?>">
-				<p class="description"><?php _e('Enter the Google API key for all users (leave blank to disable, per user API keys will still function).');?></p>
+				<select id="gp_machine_translate_provider" name="gp_machine_translate_provider">
+					<option value="">*Select*</option>
+					<option value="Badiu"<?php if( $this->provider == 'Badiu' ) { echo " selected"; }?>>Badiu</option>
+					<option value="Bing"<?php if( $this->provider == 'Bing' ) { echo " selected"; }?>>Bing</option>
+					<option value="Google"<?php if( $this->provider == 'Google' ) { echo " selected"; }?>>Google</option>
+				</select>
+				<p class="description"><?php _e('Select the translation provider to use.');?></p>
+				</td>
+			</tr>
+			<tr>
+				<th><label for="gp_machine_translate_key"><?php _e('Global API Key');?></label></th>
+				<td>
+				<input type="text" id="gp_machine_translate_key" name="gp_machine_translate_key" size="40" value="<?php echo htmlentities( $this->key );?>">
+				<p class="description"><?php _e('Enter the API key for all users (leave blank to disable, per user API keys will still function).');?></p>
 				</td>
 			</tr>
 		</table>
 		
-		<?php submit_button( __('Save'), 'primary', 'save_gp_google_transalate' ); ?>
+		<?php submit_button( __('Save'), 'primary', 'save_gp_machine_transalate' ); ?>
 		
 	</form>
 	
 </div>
 <?php		
+	}
+	
+	private function upgrade() {
+		GLOBAL $wpdb;
+		
+		// If the old google key exists, update it to the new option name and remove it.
+		// On the next upgrade this code will not run.
+		// To be removed in a future version once we're well past version 0.7.
+		if( get_option( 'gp_google_translate_key', false ) !== false ) {
+			// Rename the global translation key name.
+			update_option( 'gp_machine_translate_key', get_option( 'gp_google_translate_key', false ) );
+			delete_option( 'gp_google_translate_key' );
+		}
+		
+		// Rename the per use translation key name.  We can't do this in the "if" above as the global key
+		// may be set to blank but user keys may still exist, so we have to do this on each upgrade.
+		// To be removed in a future version once we're well past version 0.7.
+		$wpdb->query( "UPDATE {$wpdb->usermeta} SET `meta_key`='gp_machine_translate_key' WHERE `meta_key`='gp_google_translate_key';" );
+			
+		// Update the version option to the current version so we don't run the upgrade process again.
+		update_option( 'gp_machine_translate_version', $this->version );
 	}
 }
 
