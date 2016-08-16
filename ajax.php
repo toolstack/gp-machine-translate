@@ -13,7 +13,11 @@ function gp_machine_translate_action_callback() {
 	
 	$new_string = $gp_machine_translate->translate_batch( $locale, $strings );
 	
-	$translations = array( 'success' => true, 'data' => array( 'translatedText' => $new_string ) );
+	if( is_wp_error( $new_string ) ) {
+		$translations = array( 'success' => false, 'error' => array( 'message' => $new_string->get_error_message(), 'reason' => $new_string->get_error_data() ) );
+	} else {
+		$translations = array( 'success' => true, 'data' => array( 'translatedText' => $new_string ) );
+	}
 	
 	wp_send_json( $translations );
 }
