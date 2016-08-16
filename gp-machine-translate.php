@@ -42,7 +42,7 @@ class GP_Machine_Translate {
 		}
 		
 		// Get the global translate provider from the WordPress options table.
-		$this->provider = get_option( 'gp_machine_translate_provider', 'transltr.org' );
+		$this->provider = get_option( 'gp_machine_translate_provider' );
 
 		// Get the global translate key from the WordPress options table.
 		$this->key = get_option('gp_machine_translate_key');
@@ -50,7 +50,11 @@ class GP_Machine_Translate {
 		// Get the global translate key from the WordPress options table.
 		$this->client_id = get_option('gp_machine_translate_client_id');
 		
-		include_once( $provider_includes[$this->provider] );
+		$gp_machine_translate_locales = array();
+		
+		if( in_array( $this->provider, $this->providers ) ) {
+			include_once( $provider_includes[$this->provider] );
+		}
 		
 		$this->locales = $gp_machine_translate_locales;
 	
