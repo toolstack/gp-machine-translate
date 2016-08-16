@@ -172,7 +172,7 @@ class GP_Machine_Translate {
 		// Loop through all the sets.
 		foreach( $translation_sets as $set ) {
 			// Create a template array to pass in to the worker function at the end of the loop.
-			$bulk = array( 'action' => 'gtranslate', 'priority' => 0, 'row-ids' => array() );
+			$bulk = array( 'action' => 'gp_machine_translate', 'priority' => 0, 'row-ids' => array() );
 			
 			// Create a new GP_Translation object to use.
 			$translation = new GP_Translation;
@@ -180,7 +180,7 @@ class GP_Machine_Translate {
 			// Get the strings for the current translation.
 			$strings = $translation->for_translation( $project_obj, $set, null, array( 'status' => 'untranslated') );
 
-			// Add the strings to the $bulk tempate we setup earlier.
+			// Add the strings to the $bulk template we setup earlier.
 			foreach( $strings as $string ) {
 				$bulk['row-ids'][] .= $string->row_id;
 			}
@@ -237,7 +237,7 @@ class GP_Machine_Translate {
 	public function gp_entry_actions( $actions ) {
 		// Make sure we are currently on a supported locale.
 		if ( $this->provider_code ) {
-			$actions[] = '<a href="#" class="gtranslate" tabindex="-1">' . __('Machine Translate') . '</a> (' . $this->banners[$this->provider] . ')';
+			$actions[] = '<a href="#" class="gp_machine_translate" tabindex="-1">' . __('Machine Translate') . '</a> (' . $this->banners[$this->provider] . ')';
 		}
 
 		return $actions;
@@ -247,14 +247,14 @@ class GP_Machine_Translate {
 	public function gp_translation_set_bulk_action() {
 		// Make sure we are currently on a supported locale.
 		if ( $this->provider_code ) {
-			echo '<option value="gtranslate">' . __('Machine Translate') . ' (' . $this->banners[$this->provider] . ')' . '</option>';
+			echo '<option value="gp_machine_translate">' . __('Machine Translate') . ' (' . $this->banners[$this->provider] . ')' . '</option>';
 		}
 	}
 
 	// This function handles the actual bulk translation as passed in by the translation set list.
 	public function gp_translation_set_bulk_action_post( $project, $locale, $translation_set, $bulk ) {
 		// If we're not doing a bulk translation, just return.
-		if ( 'gtranslate' != $bulk['action'] ) {
+		if ( 'gp_machine_translate' != $bulk['action'] ) {
 			return;
 		}
 
@@ -276,7 +276,7 @@ class GP_Machine_Translate {
 		foreach ( $bulk['row-ids'] as $row_id ) {
 			// check to see if there is a '-' in the $row_id, if not, we should skip it.
 			// gp_in() returns true if the search string is found in the haystack.
-			if ( gp_in( '-', $row_id ) ) {
+			if ( ! gp_in( '-', $row_id ) ) {
 				$skipped++;
 				continue;
 			}
@@ -376,6 +376,11 @@ class GP_Machine_Translate {
 	}
 
 	public function translate_batch( $locale, $strings ) {
+		
+		if( is_object( $locale ) ) {
+			$locale = $locale->slug;
+		}
+		
 		switch( $this->provider ) {
 			case 'Google Translate':
 				return $this->google_translate_batch( $locale, $strings );
@@ -667,10 +672,14 @@ class GP_Machine_Translate {
 				<td>
 				<select id="gp_machine_translate_provider" name="gp_machine_translate_provider">
 					<option value="">*Select*</option>
-					<option value="Google Translate"<?php if( $this->provider == 'Google Translate' ) { echo " selected"; }?>>Google Translate</option>
-					<option value="Microsoft Translator"<?php if( $this->provider == 'Microsoft Translator' ) { echo " selected"; }?>>Microsoft Translator</option>
-					<option value="transltr.org"<?php if( $this->provider == 'transltr.org' ) { echo " selected"; }?>>transltr.org</option>
-					<option value="Yandex.Translate"<?php if( $this->provider == 'Yandex.Translate' ) { echo " selected"; }?>>Yandex.Translate</option>
+<?php
+					foreach( $this->providers as $provider ) {
+						$selected = '';
+						if( $this->provider == $provider ) { $selected = " selected"; }
+						
+						echo '					<option value="' . $provider . '"' . $selected . '>' . $provider . '</option>';
+					}
+?>
 				</select>
 				<p class="description"><?php _e('Select the translation provider to use.');?></p>
 				</td>

@@ -6,7 +6,7 @@ $gp.machine_translate = function( $ ) { return {
 		$gp.machine_translate.install_hooks();
 	},
 	install_hooks: function() {
-		$( $gp.machine_translate.table ).on( 'click', 'a.gtranslate', $gp.machine_translate.hooks.machine_translate )
+		$( $gp.machine_translate.table ).on( 'click', 'a.gp_machine_translate', $gp.machine_translate.hooks.machine_translate )
 	},
 	machine_translate: function( link ) {
 		original_text = link.parents( '.textareas' ).siblings( '.original' ).text();
