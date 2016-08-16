@@ -6,7 +6,7 @@ Description: Machine Translate plugin for GlotPress.
 Version: 0.8
 Author: Greg Ross
 Author URI: http://toolstack.com
-Tags: glotpress, glotpress plugin, translate, google, bing, yandex
+Tags: glotpress, glotpress plugin, translate, google, bing, yandex, microsoft
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
@@ -19,7 +19,9 @@ class GP_Machine_Translate {
 	private $provider_code = false;
 	private $provider;
 	private	$providers;
+	private $banners;
 	private $locales;
+	private $client_id;
 	
 	public function __construct() {
 		// Handle the WordPress user profile items
@@ -31,8 +33,9 @@ class GP_Machine_Translate {
 		// Add the admin page to the WordPress settings menu.
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10, 1 );
 
-		$this->providers = array( 'Yandex', 'Bing', 'Google' );
-		$provider_includes = array( 'Yandex' => 'yandex.locales.php', 'Bing' => 'bing.locales.php', 'Google' => 'google.locales.php' );
+		$this->providers = array( 'Google Translate', 'Microsoft Translator', 'Yandex.Translate' );
+		$this->banners = array( 'Google Translate' => 'Google Translate', 'Microsoft Translator' => 'Microsoft Translator', 'Yandex.Translate' => '<a href="http://translate.yandex.com/" target="_blank">Powered by Yandex.Translate</a>' );
+		$provider_includes = array( 'Yandex.Translate' => 'yandex.locales.php', 'Microsoft Translator' => 'microsoft.locales.php', 'Google Translate' => 'google.locales.php' );
 
 		if( get_option( 'gp_machine_translate_version', '0.7' ) != $this->version ) {
 			$this->upgrade();
@@ -43,7 +46,10 @@ class GP_Machine_Translate {
 
 		// Get the global translate key from the WordPress options table.
 		$this->key = get_option('gp_machine_translate_key');
-	
+
+		// Get the global translate key from the WordPress options table.
+		$this->client_id = get_option('gp_machine_translate_client_id');
+		
 		include_once( $provider_includes[$this->provider] );
 		
 		$this->locales = $gp_machine_translate_locales;
@@ -125,9 +131,9 @@ class GP_Machine_Translate {
 		return $this->personal_options_update( $user );
 	}
 	
-	// This function adds the "Bulk Machine Translate" option to the projects menu.
+	// This function adds the "Machine Translate" option to the projects menu.
 	public function gp_project_actions( $actions, $project ) {
-		$actions[] .= gp_link_get( gp_url( 'bulk-translate/' . $project->slug), __('Bulk Machine Translate') );
+		$actions[] .= gp_link_get( gp_url( 'bulk-translate/' . $project->slug), __('Machine Translate') . ' (' . $this->banners[$this->provider] . ')' );
 		
 		return $actions;
 	}
@@ -223,21 +229,21 @@ class GP_Machine_Translate {
 		wp_localize_script( 'gp-machine-translate-js', 'gp_machine_translate', $options );
 	}
 
-	// This function adds the "Translation via Machine Translate" to the individual translation items.
+	// This function adds the "Machine Translate" to the individual translation items.
 	public function gp_entry_actions( $actions ) {
 		// Make sure we are currently on a supported locale.
 		if ( $this->provider_code ) {
-			$actions[] = '<a href="#" class="gtranslate" tabindex="-1">' . __('Translation via Machine Translate') . '</a>';
+			$actions[] = '<a href="#" class="gtranslate" tabindex="-1">' . __('Machine Translate') . '</a> (' . $this->banners[$this->provider] . ')';
 		}
 
 		return $actions;
 	}
 
-	// This function adds the "Translate via Machine Translate" to the bulk actions dropdown in the translation set list.
+	// This function adds the "Machine Translate" to the bulk actions dropdown in the translation set list.
 	public function gp_translation_set_bulk_action() {
 		// Make sure we are currently on a supported locale.
 		if ( $this->provider_code ) {
-			echo '<option value="gtranslate">' . __('Translate via Machine Translate') . '</option>';
+			echo '<option value="gtranslate">' . __('Machine Translate') . ' (' . $this->banners[$this->provider] . ')' . '</option>';
 		}
 	}
 
@@ -343,7 +349,7 @@ class GP_Machine_Translate {
 
 			// Did we have any provider errors.
 			if ( $provider_errors ) {
-				$message[] = sprintf( __('Error from %s Translate: %d.' ), $this->provider, $provider_errors );
+				$message[] = sprintf( __('Error from %s: %d.' ), $this->provider, $provider_errors );
 			}
 
 			// Did we have any errors when we saved everything to the database?
@@ -367,29 +373,50 @@ class GP_Machine_Translate {
 
 	public function translate_batch( $locale, $strings ) {
 		switch( $this->provider ) {
-			case 'Google':
+			case 'Google Translate':
 				return $this->google_translate_batch( $locale, $strings );
 				
 				break;
-			case 'Bing':
-				return $this->bing_translate_batch( $locale, $strings );
+			case 'Microsoft Translator':
+				return $this->microsoft_translate_batch( $locale, $strings );
 				
 				break;
-			case 'Yandex':
+			case 'Yandex.Translate':
 				return $this->yandex_translate_batch( $locale, $strings );
 				
 				break;
 		}
 	}
 	
-	private function bing_translate_batch( $locale, $strings ) {
+	private function microsoft_translate_batch( $locale, $strings ) {
+		// If we don't have a supported Microsoft Translator translation code, throw an error.
+		if ( ! array_key_exists( $locale, $this->locales ) ) {
+			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s.", $locale->slug, $this->provider ) );
+		}
+
+		// If we don't have any strings, throw an error.
+		if ( count( $strings ) == 0 ) {
+			return new WP_Error( 'gp_machine_translate', "No strings found to translate." );
+		}
+
 		
+		include( dirname( __FILE__ ) . '/vendor/autoload.php' );
+		
+		$config = array(
+			'clientID' => $this->client_id,
+			'clientSecret' => $this->key,
+		);
+		$t = new \MicrosoftTranslator\Translate( $config );
+		$translation = $t->translate( $strings, $this->locales[$locale], 'en' );
+		
+		return $translation;
+
 	}
 
 	private function yandex_translate_batch( $locale, $strings ) {
 		// If we don't have a supported Yandex translation code, throw an error.
 		if ( ! array_key_exists( $locale, $this->locales ) ) {
-			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s Translate.", $locale->slug, $this->provider ) );
+			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s.", $locale->slug, $this->provider ) );
 		}
 
 		// If we don't have any strings, throw an error.
@@ -456,7 +483,7 @@ class GP_Machine_Translate {
 	private function google_translate_batch( $locale, $strings ) {
 		// If we don't have a supported Google translation code, throw an error.
 		if ( ! array_key_exists( $locale->slug, $this->locales ) ) {
-			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s Translate.", $locale->slug, $this->provider ) );
+			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s.", $locale->slug, $this->provider ) );
 		}
 
 		// If we don't have any strings, throw an error.
@@ -553,6 +580,12 @@ class GP_Machine_Translate {
 				$this->key = sanitize_text_field( $_POST['gp_machine_translate_key'] );
 			}	
 			
+			// If the client ID value is being saved, store it in the global key setting.
+			if( array_key_exists( 'gp_machine_translate_client_id', $_POST ) ) {
+				// Make sure to sanitize the data before saving it.
+				$this->client_id = sanitize_text_field( $_POST['gp_machine_translate_client_id'] );
+			}	
+
 			$provider = $_POST['gp_machine_translate_provider'];
 			
 			if( $provider != '*Select*' && in_array( $provider, $this->providers ) ) {
@@ -562,6 +595,9 @@ class GP_Machine_Translate {
 			
 			// Update the option in the database.
 			update_option( 'gp_machine_translate_key', $this->key );
+			
+			// Update the client ID>
+			update_option( 'gp_machine_translate_client_id', $this->client_id );
 		}
 		
 	?>	
@@ -575,9 +611,9 @@ class GP_Machine_Translate {
 				<td>
 				<select id="gp_machine_translate_provider" name="gp_machine_translate_provider">
 					<option value="">*Select*</option>
-					<option value="Yandex"<?php if( $this->provider == 'Yandex' ) { echo " selected"; }?>>Yandex</option>
-					<option value="Bing"<?php if( $this->provider == 'Bing' ) { echo " selected"; }?>>Bing</option>
-					<option value="Google"<?php if( $this->provider == 'Google' ) { echo " selected"; }?>>Google</option>
+					<option value="Google Translate"<?php if( $this->provider == 'Google Translate' ) { echo " selected"; }?>>Google Translate</option>
+					<option value="Microsoft Translator"<?php if( $this->provider == 'Microsoft Translator' ) { echo " selected"; }?>>Microsoft Translator</option>
+					<option value="Yandex.Translate"<?php if( $this->provider == 'Yandex.Translate' ) { echo " selected"; }?>>Yandex.Translate</option>
 				</select>
 				<p class="description"><?php _e('Select the translation provider to use.');?></p>
 				</td>
@@ -587,6 +623,13 @@ class GP_Machine_Translate {
 				<td>
 				<input type="text" id="gp_machine_translate_key" name="gp_machine_translate_key" size="40" value="<?php echo htmlentities( $this->key );?>">
 				<p class="description"><?php _e('Enter the API key for all users (leave blank to disable, per user API keys will still function).');?></p>
+				</td>
+			</tr>
+			<tr>
+				<th><label for="gp_machine_translate_client_id"><?php _e('Client ID');?></label></th>
+				<td>
+				<input type="text" id="gp_machine_translate_client_id" name="gp_machine_translate_client_id" size="40" value="<?php echo htmlentities( $this->client_id );?>">
+				<p class="description"><?php _e('Enter the client ID if use Microsoft Translator.');?></p>
 				</td>
 			</tr>
 		</table>

@@ -1,0 +1,6 @@
+{
+    "require": {
+        "natxet/microsoft-translation-api": "*"
+    },
+    "minimum-stability": "dev"
+}

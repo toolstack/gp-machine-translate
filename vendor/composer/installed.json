@@ -1,0 +1,46 @@
+[
+    {
+        "name": "natxet/microsoft-translation-api",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/natxet/MicrosoftTranslator.git",
+            "reference": "8588502d5e24b135f760593ea833fa3f00a91abb"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/natxet/MicrosoftTranslator/zipball/8588502d5e24b135f760593ea833fa3f00a91abb",
+            "reference": "8588502d5e24b135f760593ea833fa3f00a91abb",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.0"
+        },
+        "time": "2013-05-24 14:51:58",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "MicrosoftTranslator": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "authors": [
+            {
+                "name": "Natxet",
+                "email": "icofre@gmail.com",
+                "homepage": "https://github.com/natxet"
+            },
+            {
+                "name": "Microsoft"
+            }
+        ],
+        "description": "Access to the free Microsoft's HTTP translation API",
+        "homepage": "http://msdn.microsoft.com/en-us/library/ff512419.aspx",
+        "keywords": [
+            "microsoft",
+            "translation"
+        ]
+    }
+]
