@@ -5,9 +5,8 @@ Three machine translation providers are supported (though only one at a time):
 
 * Google Translate (pay per character)
 * Microsoft Translator (free tier available)
-* Yandex.Translate (free)
-
-All three providers require an API key and you must sign up with them to acquire one.
+* translte.org (free)
+* Yandex.Translate (free but requires Yandex account)
 
 ## Google
 
@@ -16,6 +15,10 @@ Login to your [Google developers console](http://console.developer.google.com) a
 Once you have the Google API key, you can set the key for all users or a specific user.
 
 ## Microsoft Translator
+
+Too be completed later.
+
+## translte.org
 
 Too be completed later.
 
