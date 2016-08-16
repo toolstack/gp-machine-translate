@@ -367,16 +367,16 @@ class GP_Machine_Translate {
 
 	public function translate_batch( $locale, $strings ) {
 		switch( $this->provider ) {
-			case 'google':
-				return google_translate_batch( $locale, $strings );
+			case 'Google':
+				return $this->google_translate_batch( $locale, $strings );
 				
 				break;
-			case 'bing':
-				return bing_translate_batch( $locale, $strings );
+			case 'Bing':
+				return $this->bing_translate_batch( $locale, $strings );
 				
 				break;
-			case 'yandex':
-				return yandex_translate_batch( $locale, $strings );
+			case 'Yandex':
+				return $this->yandex_translate_batch( $locale, $strings );
 				
 				break;
 		}
@@ -388,7 +388,7 @@ class GP_Machine_Translate {
 
 	private function yandex_translate_batch( $locale, $strings ) {
 		// If we don't have a supported Yandex translation code, throw an error.
-		if ( ! array_key_exists( $locale->slug, $this->locales ) ) {
+		if ( ! array_key_exists( $locale, $this->locales ) ) {
 			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s Translate.", $locale->slug, $this->provider ) );
 		}
 
@@ -396,18 +396,13 @@ class GP_Machine_Translate {
 		if ( count( $strings ) == 0 ) {
 			return new WP_Error( 'gp_machine_translate', "No strings found to translate." );
 		}
-		
+
 		// This is the URL of the Yandex API.
-		$url = 'ttps://translate.yandex.net/api/v1.5/tr.json/translate?key=' . $this->key . '&translation direction=en-' . urlencode( $this->locales[$locale->slug] );
+		$url = 'https://translate.yandex.net/api/v1.5/tr.json/translate?key=' . $this->key . '&lang=en-' . urlencode( $this->locales[$locale] );
 
 		// Loop through the stings and add them to the $url as a query string.
 		foreach ( $strings as $string ) {
-			$url .= '&text to translate=' . urlencode( $string );
-		}
-
-		// If we just have a single string, add an extra q= to the end so Yandex things we're doing multiple strings.
-		if ( count( $strings ) == 1 ) {
-			$url .= '&text to translate=';
+			$url .= '&text=' . urlencode( $string );
 		}
 
 		// Get the response from Yandex.
@@ -423,34 +418,34 @@ class GP_Machine_Translate {
 
 		// If something went wrong with the response from Yandex, throw an error.
 		if ( ! $json ) {
-			return new WP_Error( 'machine_translate', 'Error decoding JSON from Google Translate.' );
+			return new WP_Error( 'gp_machine_translate', 'Error decoding JSON from Yandex Translate.' );
 		}
 
 		if ( isset( $json->error ) ) {
-			return new WP_Error( 'machine_translate', sprintf( 'Error auto-translating: %1$s', $json->error->errors[0]->message ) );
+			return new WP_Error( 'gp_machine_translate', sprintf( 'Error auto-translating: %1$s', $json->error->errors[0]->message ) );
 		}
 
 		// Setup an temporary array to use to process the response.
 		$translations = array();
 
 		// If the translations have been return as a single entry, make it an array so it's easier to process later.
-		if ( ! is_array( $json->data->translations ) ) {
-			$json->data->translations = array( $json->data->translations );
+		if ( ! is_array( $json->text ) ) {
+			$json->text = array( $json->text );
 		}
 
 		// Merge the originals and translations arrays.
-		$items = gp_array_zip( $strings, $json->data->translations );
+		$items = gp_array_zip( $strings, $json->text );
 
 		// If there are no items, throw an error.
 		if ( ! $items ) {
-			return new WP_Error( 'machine_translate', 'Error merging arrays' );
+			return new WP_Error( 'gp_machine_translate', 'Error merging arrays' );
 		}
-
+		
 		// Loop through the items and clean up the responses.
 		foreach ( $items as $item ) {
 			list( $string, $translation ) = $item;
 
-			$translations[] = $this->google_translate_fix( $translation->translatedText );
+			$translations[] = $this->google_translate_fix( $translation );
 		}
 
 		// Return the results.
@@ -495,11 +490,11 @@ class GP_Machine_Translate {
 
 		// If something went wrong with the response from Google, throw an error.
 		if ( ! $json ) {
-			return new WP_Error( 'machine_translate', 'Error decoding JSON from Google Translate.' );
+			return new WP_Error( 'gp_machine_translate', 'Error decoding JSON from Google Translate.' );
 		}
 
 		if ( isset( $json->error ) ) {
-			return new WP_Error( 'machine_translate', sprintf( 'Error auto-translating: %1$s', $json->error->errors[0]->message ) );
+			return new WP_Error( 'gp_machine_translate', sprintf( 'Error auto-translating: %1$s', $json->error->errors[0]->message ) );
 		}
 
 		// Setup an temporary array to use to process the response.
@@ -515,7 +510,7 @@ class GP_Machine_Translate {
 
 		// If there are no items, throw an error.
 		if ( ! $items ) {
-			return new WP_Error( 'machine_translate', 'Error merging arrays' );
+			return new WP_Error( 'gp_machine_translate', 'Error merging arrays' );
 		}
 
 		// Loop through the items and clean up the responses.
