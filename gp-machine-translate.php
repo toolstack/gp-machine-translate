@@ -65,9 +65,13 @@ class GP_Machine_Translate {
 			
 			// Load the user translate key from the WordPress user meta table, using the currently logged in user id.
 			$user_key = get_user_meta( $user_obj->ID, 'gp_machine_translate_key', true );
+			$user_client_id = get_user_meta( $user_obj->ID, 'gp_machine_translate_client_id', true );
 			
 			// If there is a user key, override the global key.
-			if( $user_key ) { $this->key = $user_key; }
+			if( $user_key ) { 
+				$this->key = $user_key; 
+				$this->client_id = $user_client_id; 
+			}
 		}
 
 		// If we didn't find a global or user key, return and don't setup and of the actions.
@@ -102,6 +106,9 @@ class GP_Machine_Translate {
 	public function edit_user_profile( $user ) {
 		// Get the current user key from the WordPress options table.
 		$user_key = get_user_meta( $user->ID, 'gp_machine_translate_key', true );
+
+		// Get the current user client id from the WordPress options table.
+		$user_client_id = get_user_meta( $user->ID, 'gp_machine_translate_client_id', true );
 		
 		// If the user cannot edit their profile, then don't show the settings.
 		if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
@@ -114,6 +121,13 @@ class GP_Machine_Translate {
 			<input type="text" id="gp_machine_translate_user_key" name="gp_machine_translate_user_key" size="40" value="<?php echo htmlentities( $user_key );?>">
 			<p class="description"><?php printf( __( 'Enter the %s API key for this user.' ), $this->provider );?></p>
 			</td>
+			<tr>
+				<th><label for="gp_machine_translate_user_client_id"><?php _e('Client ID');?></label></th>
+				<td>
+				<input type="text" id="gp_machine_translate_user_client_id" name="gp_machine_translate_user_client_id" size="40" value="<?php echo htmlentities( $user_client_id );?>">
+				<p class="description"><?php _e('Enter the client ID for this user if using Microsoft Translator.');?></p>
+				</td>
+			</tr>
 		</tr>
 	</table>
 <?php		
@@ -127,6 +141,7 @@ class GP_Machine_Translate {
 		
 		// Unlike the profile edit function, we only get the user id passed in as a parameter.
 		update_user_meta( $user_id, 'gp_machine_translate_key', sanitize_text_field( $_POST['gp_machine_translate_user_key'] ) );
+		update_user_meta( $user_id, 'gp_machine_translate_client_id', sanitize_text_field( $_POST['gp_machine_translate_user_client_id'] ) );
 	}
 
 	// Once a user profile has been edited, this function saves the settings to the WordPress options table.
@@ -695,7 +710,7 @@ class GP_Machine_Translate {
 				<th><label for="gp_machine_translate_client_id"><?php _e('Client ID');?></label></th>
 				<td>
 				<input type="text" id="gp_machine_translate_client_id" name="gp_machine_translate_client_id" size="40" value="<?php echo htmlentities( $this->client_id );?>">
-				<p class="description"><?php _e('Enter the client ID if use Microsoft Translator.');?></p>
+				<p class="description"><?php _e('Enter the client ID if using Microsoft Translator.');?></p>
 				</td>
 			</tr>
 		</table>
