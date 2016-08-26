@@ -83,6 +83,209 @@ To set if for a specific user, go to the users profile and scroll down to the "G
 
 Note, if both a global and user API key are set, the user API key will override the global API key.
 
+= Supported Languages by Provider =
+
+Google Translate
+----------------
+Afrikaans
+Arabic
+Azerbaijani
+Bulgarian
+Bosnian
+Catalan
+Czech
+Welsh
+Danish
+German
+Greek
+English
+Esperanto
+Spanish (Spain)
+Estonian
+Basque
+Persian
+Finnish
+French (France)
+Irish
+Scottish Gaelic
+Galician
+Gujarati
+Hausa
+Hebrew
+Hindi
+Croatian
+Hungarian
+Armenian
+Indonesian
+Icelandic
+Italian
+Japanese
+Javanese
+Georgian
+Kazakh
+Khmer
+Kannada
+Korean
+Latin
+Lao
+Lithuanian
+Latvian
+Malagasy
+Macedonian
+Malayalam
+Mongolian
+Marathi
+Maori
+Malay
+Norwegian (Bokmål)
+Nepali
+Dutch
+Norwegian (Nynorsk)
+Norwegian
+Punjabi
+Polish
+Portuguese (Portugal)
+Romanian
+Russian
+Sinhala
+Slovak
+Slovenian
+Somali
+Albanian
+Serbian
+Sundanese
+Swedish
+Swahili
+Tamil
+Telugu
+Tajik
+Thai
+Tagalog
+Turkish
+Ukrainian
+Urdu
+Uzbek
+Vietnamese
+Yiddish
+Yoruba
+
+Microsoft Translator
+--------------------
+Afrikaans
+Arabic
+Bulgarian
+Bosnian
+Catalan
+Czech
+Welsh
+Danish
+German
+Greek
+Spanish (Spain)
+Estonian
+Persian
+Finnish
+French (France)
+Hebrew
+Hindi
+Croatian
+Hungarian
+Indonesian
+Italian
+Japanese
+Korean
+Lithuanian
+Latvian
+Malay
+Dutch
+Norwegian
+Polish
+Portuguese (Portugal)
+Romanian
+Russian
+Slovak
+Slovenian
+Serbian
+Swedish
+Swahili
+Thai
+Klingon
+Turkish
+Ukrainian
+Urdu
+Vietnamese
+
+transltr.org
+------------
+Arabic
+Bulgarian
+Bosnian
+Catalan
+Czech
+Welsh
+Danish
+German
+Greek
+Spanish (Spain)
+Estonian
+Persian
+Finnish
+French (France)
+Hebrew
+Hindi
+Croatian
+Hungarian
+Indonesian
+Italian
+Japanese
+Korean
+Lithuanian
+Latvian
+Malay
+Dutch
+Norwegian
+Polish
+Portuguese (Portugal)
+Romanian
+Russian
+Slovak
+Slovenian
+Serbian
+Swedish
+Swahili
+Thai
+Turkish
+Ukrainian
+Urdu
+Vietnamese
+Yiddish
+
+Yandex.Translate
+----------------
+Catalan
+Czech
+Danish
+German
+Greek
+Spanish (Spain)
+Estonian
+Finnish
+French (France)
+Hungarian
+Italian
+Lithuanian
+Latvian
+Macedonian
+Dutch
+Norwegian
+Portuguese (Portugal)
+Russian
+Slovak
+Slovenian
+Swedish
+Turkish
+Ukrainian
+
 == Installation ==
 
 Install from the WordPress plugin directory.
