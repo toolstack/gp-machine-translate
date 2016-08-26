@@ -437,7 +437,7 @@ class GP_Machine_Translate {
 		foreach ( $strings as $string ) {
 			$url = $base_url . urlencode( $string );
 
-			// Get the response from translte.org.
+			// Get the response from transltr.org.
 			$response = wp_remote_get( $url );
 
 			// Did we get an error?
@@ -445,12 +445,12 @@ class GP_Machine_Translate {
 				return $response;
 			}
 
-			// Decode the response from translte.org.
+			// Decode the response from transltr.org.
 			$json = json_decode( wp_remote_retrieve_body( $response ) );
 
-			// If something went wrong with the response from translte.org, throw an error.
+			// If something went wrong with the response from transltr.org, throw an error.
 			if ( ! $json ) {
-				return new WP_Error( 'gp_machine_translate', 'Error decoding JSON from translte.org Translate.' );
+				return new WP_Error( 'gp_machine_translate', 'Error decoding JSON from transltr.org Translate.' );
 			}
 
 			if ( isset( $json->error ) ) {
