@@ -1,7 +1,7 @@
 # GP Machine Translate
 A machine translate plugin for [GlotPress as a WordPress plugin](https://github.com/GlotPress/GlotPress-WP).
 
-Three machine translation providers are supported (though only one at a time):
+Four machine translation providers are supported (though only one at a time):
 
 * Google Translate (pay per character)
 * Microsoft Translator (free tier available)

@@ -32,22 +32,35 @@
 
 	$output = '';
 	$markdown = '';
+	$wp_md = "\t";
+	
 	foreach( $providers as $provider ) {
 		sort( $storage[$provider] );
-		$output .= $provider . str_repeat( ' ', $width - strlen( $provider )  ) . '  ';
-		$markdown .= $provider . str_repeat( ' ', $width - strlen( $provider )  ) . ' | ';
+		
+		$padding = str_repeat( ' ', $width - strlen( $provider )  );
+		
+		$output .= $provider . $padding . '  ';
+		$markdown .= $provider . $padding . ' | ';
+		$wp_md .= $provider . $padding . '  ';
 	}
 	
-	$output = trim( $output ) . PHP_EOL;
-	$markdown = trim( $markdown ) . PHP_EOL;
+	$output = rtrim( $output ) . PHP_EOL;
+	$markdown = rtrim( $markdown ) . PHP_EOL;
+	$wp_md = rtrim( $wp_md ) . PHP_EOL;
+	
+	$wp_md .= "\t";
 	
 	foreach( $providers as $provider ) {
-		$output .= str_repeat( '-', $width ) . '  ';
-		$markdown .= str_repeat( '-', $width ) . ' | ';
+		$padding = str_repeat( '-', $width );
+		
+		$output .= $padding . '  ';
+		$markdown .= $padding . '-|-';
+		$wp_md .= $padding . '  ';
 	}
 	
-	$output = trim( $output ) . PHP_EOL;
-	$markdown = trim( $markdown ) . PHP_EOL;
+	$output = rtrim( $output ) . PHP_EOL;
+	$markdown = rtrim( $markdown ) . PHP_EOL;
+	$wp_md = rtrim( $wp_md ) . PHP_EOL;
 
 	for( $i = 0; $i < $length; $i++ ) {
 		$line = '';
@@ -64,10 +77,11 @@
 			}
 		}
 			
-		$output .= trim( $line ) . PHP_EOL;
-		$markdown .= trim( $mline ) . PHP_EOL;
+		$output .= rtrim( $line ) . PHP_EOL;
+		$markdown .= rtrim( $mline ) . PHP_EOL;
+		$wp_md .= "\t" . rtrim( $line ) . PHP_EOL;
 	}
 	
 	file_put_contents( 'provider-chart.ascii.txt', $output );
 	file_put_contents( 'provider-chart.markdown.txt', $markdown );
-	
+	file_put_contents( 'provider-chart.wordpress.txt', $wp_md );

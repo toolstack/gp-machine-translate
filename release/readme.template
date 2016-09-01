@@ -3,7 +3,7 @@ Contributors: GregRoss
 Donate link: http://toolstack.com/donate
 Plugin URI: http://glot-o-matic.com/gp-machine-translate
 Author URI: http://toolstack.com
-Tags: glotpress, glotpress plugin, translate, google, bing, yandex, microsoft
+Tags: glotpress, glotpress plugin, translate, google, bing, yandex, microsoft, transltr
 Requires at least: 4.4
 Tested up to: {{WP-VERSION}}
 Stable tag: {{TAG}}
@@ -16,7 +16,7 @@ A machine translate plugin for GlotPress as a WordPress plugin.
 
 A machine translate plugin for [GlotPress as a WordPress plugin](https://github.com/GlotPress/GlotPress-WP).
 
-Three machine translation providers are supported (though only one at a time):
+Four machine translation providers are supported (though only one at a time):
 
 * Google Translate (pay per character)
 * Microsoft Translator (free tier available)
@@ -85,89 +85,89 @@ Note, if both a global and user API key are set, the user API key will override 
 
 = Supported Languages by Provider =
 
-Google Translate       Microsoft Translator   transltr.org           Yandex.Translate
----------------------  ---------------------  ---------------------  ---------------------
-Afrikaans              Afrikaans              Arabic                 Catalan
-Albanian               Arabic                 Bosnian                Czech
-Arabic                 Bosnian                Bulgarian              Danish
-Armenian               Bulgarian              Catalan                Dutch
-Azerbaijani            Catalan                Croatian               Estonian
-Basque                 Croatian               Czech                  Finnish
-Bosnian                Czech                  Danish                 French (France)
-Bulgarian              Danish                 Dutch                  German
-Catalan                Dutch                  Estonian               Greek
-Croatian               Estonian               Finnish                Hungarian
-Czech                  Finnish                French (France)        Italian
-Danish                 French (France)        German                 Latvian
-Dutch                  German                 Greek                  Lithuanian
-English                Greek                  Hebrew                 Macedonian
-Esperanto              Hebrew                 Hindi                  Norwegian
-Estonian               Hindi                  Hungarian              Portuguese (Portugal)
-Finnish                Hungarian              Indonesian             Russian
-French (France)        Indonesian             Italian                Slovak
-Galician               Italian                Japanese               Slovenian
-Georgian               Japanese               Korean                 Spanish (Spain)
-German                 Klingon                Latvian                Swedish
-Greek                  Korean                 Lithuanian             Turkish
-Gujarati               Latvian                Malay                  Ukrainian
-Hausa                  Lithuanian             Norwegian
-Hebrew                 Malay                  Persian
-Hindi                  Norwegian              Polish
-Hungarian              Persian                Portuguese (Portugal)
-Icelandic              Polish                 Romanian
-Indonesian             Portuguese (Portugal)  Russian
-Irish                  Romanian               Serbian
-Italian                Russian                Slovak
-Japanese               Serbian                Slovenian
-Javanese               Slovak                 Spanish (Spain)
-Kannada                Slovenian              Swahili
-Kazakh                 Spanish (Spain)        Swedish
-Khmer                  Swahili                Thai
-Korean                 Swedish                Turkish
-Lao                    Thai                   Ukrainian
-Latin                  Turkish                Urdu
-Latvian                Ukrainian              Vietnamese
-Lithuanian             Urdu                   Welsh
-Macedonian             Vietnamese             Yiddish
-Malagasy               Welsh
-Malay
-Malayalam
-Maori
-Marathi
-Mongolian
-Nepali
-Norwegian
-Norwegian (Bokmål)
-Norwegian (Nynorsk)
-Persian
-Polish
-Portuguese (Portugal)
-Punjabi
-Romanian
-Russian
-Scottish Gaelic
-Serbian
-Sinhala
-Slovak
-Slovenian
-Somali
-Spanish (Spain)
-Sundanese
-Swahili
-Swedish
-Tagalog
-Tajik
-Tamil
-Telugu
-Thai
-Turkish
-Ukrainian
-Urdu
-Uzbek
-Vietnamese
-Welsh
-Yiddish
-Yoruba
+	Google Translate       Microsoft Translator   transltr.org           Yandex.Translate
+	---------------------  ---------------------  ---------------------  ---------------------
+	Afrikaans              Afrikaans              Arabic                 Catalan
+	Albanian               Arabic                 Bosnian                Czech
+	Arabic                 Bosnian                Bulgarian              Danish
+	Armenian               Bulgarian              Catalan                Dutch
+	Azerbaijani            Catalan                Croatian               Estonian
+	Basque                 Croatian               Czech                  Finnish
+	Bosnian                Czech                  Danish                 French (France)
+	Bulgarian              Danish                 Dutch                  German
+	Catalan                Dutch                  Estonian               Greek
+	Croatian               Estonian               Finnish                Hungarian
+	Czech                  Finnish                French (France)        Italian
+	Danish                 French (France)        German                 Latvian
+	Dutch                  German                 Greek                  Lithuanian
+	English                Greek                  Hebrew                 Macedonian
+	Esperanto              Hebrew                 Hindi                  Norwegian
+	Estonian               Hindi                  Hungarian              Portuguese (Portugal)
+	Finnish                Hungarian              Indonesian             Russian
+	French (France)        Indonesian             Italian                Slovak
+	Galician               Italian                Japanese               Slovenian
+	Georgian               Japanese               Korean                 Spanish (Spain)
+	German                 Klingon                Latvian                Swedish
+	Greek                  Korean                 Lithuanian             Turkish
+	Gujarati               Latvian                Malay                  Ukrainian
+	Hausa                  Lithuanian             Norwegian
+	Hebrew                 Malay                  Persian
+	Hindi                  Norwegian              Polish
+	Hungarian              Persian                Portuguese (Portugal)
+	Icelandic              Polish                 Romanian
+	Indonesian             Portuguese (Portugal)  Russian
+	Irish                  Romanian               Serbian
+	Italian                Russian                Slovak
+	Japanese               Serbian                Slovenian
+	Javanese               Slovak                 Spanish (Spain)
+	Kannada                Slovenian              Swahili
+	Kazakh                 Spanish (Spain)        Swedish
+	Khmer                  Swahili                Thai
+	Korean                 Swedish                Turkish
+	Lao                    Thai                   Ukrainian
+	Latin                  Turkish                Urdu
+	Latvian                Ukrainian              Vietnamese
+	Lithuanian             Urdu                   Welsh
+	Macedonian             Vietnamese             Yiddish
+	Malagasy               Welsh
+	Malay
+	Malayalam
+	Maori
+	Marathi
+	Mongolian
+	Nepali
+	Norwegian
+	Norwegian (Bokmål)
+	Norwegian (Nynorsk)
+	Persian
+	Polish
+	Portuguese (Portugal)
+	Punjabi
+	Romanian
+	Russian
+	Scottish Gaelic
+	Serbian
+	Sinhala
+	Slovak
+	Slovenian
+	Somali
+	Spanish (Spain)
+	Sundanese
+	Swahili
+	Swedish
+	Tagalog
+	Tajik
+	Tamil
+	Telugu
+	Thai
+	Turkish
+	Ukrainian
+	Urdu
+	Uzbek
+	Vietnamese
+	Welsh
+	Yiddish
+	Yoruba
 
 == Installation ==
 
