@@ -40,7 +40,7 @@ Microsoft has a walkthrough on how to subscribe to the Translator service here:
 
 	https://www.microsoft.com/en-us/translator/getstarted.aspx
 	
-You will need both the client secret and client id for it to function with GP Machine Translate. 
+You will need both the client secret and client id for it to function with GP Machine Translate.
 
 ## transltr.org
 
@@ -67,3 +67,89 @@ To set the API key for all users, go to the WordPress Dashboard, then Settings, 
 To set if for a specific user, go to the users profile and scroll down to the "GP Machine Translate" section and set the API key (and Client ID if required).
 
 Note, if both a global and user API key are set, the user API key will override the global API key.
+
+## Supported Languages by Provider
+
+Google Translate	Microsoft Translator	transltr.org	Yandex.Translate
+----------------	--------------------	------------	----------------
+Afrikaans			Afrikaans				Arabic			Catalan
+Arabic				Arabic					Bulgarian		Czech
+Azerbaijani			Bulgarian				Bosnian			Danish
+Bulgarian			Bosnian					Catalan			German
+Bosnian				Catalan					Czech			Greek
+Catalan				Czech					Welsh			Spanish (Spain)
+Czech				Welsh					Danish			Estonian
+Welsh				Danish					German			Finnish
+Danish				German					Greek			French (France)
+German				Greek					Spanish (Spain)	Hungarian
+Greek				Spanish (Spain)			Estonian		Italian
+English				Estonian				Persian			Lithuanian
+Esperanto			Persian					Finnish			Latvian
+Spanish (Spain)		Finnish					French (France)	Macedonian
+Estonian			French (France)			Hebrew			Dutch
+Basque				Hebrew					Hindi			Norwegian
+Persian				Hindi					Croatian		Portuguese (Portugal)
+Finnish				Croatian				Hungarian		Russian
+French (France)		Hungarian				Indonesian		Slovak
+Irish				Indonesian				Italian			Slovenian
+Scottish Gaelic		Italian					Japanese		Swedish
+Galician			Japanese				Korean			Turkish
+Gujarati			Korean					Lithuanian		Ukrainian
+Hausa				Lithuanian				Latvian
+Hebrew				Latvian					Malay
+Hindi				Malay					Dutch
+Croatian			Dutch					Norwegian
+Hungarian			Norwegian				Polish
+Armenian			Polish					Portuguese (Portugal)
+Indonesian			Portuguese (Portugal)	Romanian
+Icelandic			Romanian				Russian
+Italian				Russian					Slovak
+Japanese			Slovak					Slovenian
+Javanese			Slovenian				Serbian
+Georgian			Serbian					Swedish
+Kazakh				Swedish					Swahili
+Khmer				Swahili					Thai
+Kannada				Thai					Turkish
+Korean				Klingon					Ukrainian
+Latin				Turkish					Urdu
+Lao					Ukrainian				Vietnamese
+Lithuanian			Urdu					Yiddish
+Latvian				Vietnamese
+Malagasy
+Macedonian
+Malayalam
+Mongolian
+Marathi
+Maori
+Malay
+Norwegian (Bokmål)
+Nepali
+Dutch
+Norwegian (Nynorsk)
+Norwegian
+Punjabi
+Polish
+Portuguese (Portugal)
+Romanian
+Russian
+Sinhala
+Slovak
+Slovenian
+Somali
+Albanian
+Serbian
+Sundanese
+Swedish
+Swahili									
+Tamil
+Telugu
+Tajik
+Thai
+Tagalog
+Turkish
+Ukrainian
+Urdu
+Uzbek
+Vietnamese
+Yiddish
+Yoruba
