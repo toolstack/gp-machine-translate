@@ -10,10 +10,10 @@
 	$locales = $gp_locales->locales;
 	$storage = array();
 	$length = 0;
-	$plength = 0;
+	$width = 0;
 	
 	foreach( $providers as $provider ) {
-		if( strlen( $provider ) > $plength ) { $plength = strlen( $provider ); }
+		if( strlen( $provider ) > $width ) { $width = strlen( $provider ); }
 		
 		$gp_machine_translate_locales = array();
 		
@@ -21,6 +21,8 @@
 		
 		foreach( $gp_machine_translate_locales as $mt_locale => $p_locale ) {
 			if( array_key_exists( $mt_locale, $locales ) ) {
+				if( strlen( $locales[$mt_locale]->english_name ) > $width ) { $width = strlen( $locales[$mt_locale]->english_name ); }
+				
 				$storage[$provider][] = $locales[$mt_locale]->english_name;
 				
 				if( count( $storage[$provider] ) > $length ) { $length = count( $storage[$provider] ); }
@@ -32,16 +34,16 @@
 	$markdown = '';
 	foreach( $providers as $provider ) {
 		sort( $storage[$provider] );
-		$output .= $provider . str_repeat( ' ', $plength - strlen( $provider )  ) . '  ';
-		$markdown .= $provider . str_repeat( ' ', $plength - strlen( $provider )  ) . ' | ';
+		$output .= $provider . str_repeat( ' ', $width - strlen( $provider )  ) . '  ';
+		$markdown .= $provider . str_repeat( ' ', $width - strlen( $provider )  ) . ' | ';
 	}
 	
 	$output = trim( $output ) . PHP_EOL;
 	$markdown = trim( $markdown ) . PHP_EOL;
 	
 	foreach( $providers as $provider ) {
-		$output .= str_repeat( '-', $plength ) . '  ';
-		$markdown .= str_repeat( '-', $plength ) . ' | ';
+		$output .= str_repeat( '-', $width ) . '  ';
+		$markdown .= str_repeat( '-', $width ) . ' | ';
 	}
 	
 	$output = trim( $output ) . PHP_EOL;
@@ -54,11 +56,11 @@
 		foreach( $providers as $provider ) {
 			if( array_key_exists( $i, $storage[$provider] ) ) {
 				$locale = $storage[$provider][$i];
-				$line .= $locale . str_repeat( ' ', $plength - strlen( $locale )  ) . '  ';
-				$mline .= $locale . str_repeat( ' ', $plength - strlen( $locale )  ) . ' | ';
+				$line .= $locale . str_repeat( ' ', $width - strlen( $locale )  ) . '  ';
+				$mline .= $locale . str_repeat( ' ', $width - strlen( $locale )  ) . ' | ';
 			} else {
-				$line .= str_repeat( ' ', $plength ) . '  ';
-				$mline .= str_repeat( ' ', $plength ) . ' | ';
+				$line .= str_repeat( ' ', $width ) . '  ';
+				$mline .= str_repeat( ' ', $width ) . ' | ';
 			}
 		}
 			

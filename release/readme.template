@@ -85,87 +85,87 @@ Note, if both a global and user API key are set, the user API key will override 
 
 = Supported Languages by Provider =
 
-Google Translate	Microsoft Translator	transltr.org	Yandex.Translate
-----------------	--------------------	------------	----------------
-Afrikaans			Afrikaans				Arabic			Catalan
-Arabic				Arabic					Bulgarian		Czech
-Azerbaijani			Bulgarian				Bosnian			Danish
-Bulgarian			Bosnian					Catalan			German
-Bosnian				Catalan					Czech			Greek
-Catalan				Czech					Welsh			Spanish (Spain)
-Czech				Welsh					Danish			Estonian
-Welsh				Danish					German			Finnish
-Danish				German					Greek			French (France)
-German				Greek					Spanish (Spain)	Hungarian
-Greek				Spanish (Spain)			Estonian		Italian
-English				Estonian				Persian			Lithuanian
-Esperanto			Persian					Finnish			Latvian
-Spanish (Spain)		Finnish					French (France)	Macedonian
-Estonian			French (France)			Hebrew			Dutch
-Basque				Hebrew					Hindi			Norwegian
-Persian				Hindi					Croatian		Portuguese (Portugal)
-Finnish				Croatian				Hungarian		Russian
-French (France)		Hungarian				Indonesian		Slovak
-Irish				Indonesian				Italian			Slovenian
-Scottish Gaelic		Italian					Japanese		Swedish
-Galician			Japanese				Korean			Turkish
-Gujarati			Korean					Lithuanian		Ukrainian
-Hausa				Lithuanian				Latvian
-Hebrew				Latvian					Malay
-Hindi				Malay					Dutch
-Croatian			Dutch					Norwegian
-Hungarian			Norwegian				Polish
-Armenian			Polish					Portuguese (Portugal)
-Indonesian			Portuguese (Portugal)	Romanian
-Icelandic			Romanian				Russian
-Italian				Russian					Slovak
-Japanese			Slovak					Slovenian
-Javanese			Slovenian				Serbian
-Georgian			Serbian					Swedish
-Kazakh				Swedish					Swahili
-Khmer				Swahili					Thai
-Kannada				Thai					Turkish
-Korean				Klingon					Ukrainian
-Latin				Turkish					Urdu
-Lao					Ukrainian				Vietnamese
-Lithuanian			Urdu					Yiddish
-Latvian				Vietnamese
-Malagasy
-Macedonian
-Malayalam
-Mongolian
-Marathi
-Maori
+Google Translate       Microsoft Translator   transltr.org           Yandex.Translate
+---------------------  ---------------------  ---------------------  ---------------------
+Afrikaans              Afrikaans              Arabic                 Catalan
+Albanian               Arabic                 Bosnian                Czech
+Arabic                 Bosnian                Bulgarian              Danish
+Armenian               Bulgarian              Catalan                Dutch
+Azerbaijani            Catalan                Croatian               Estonian
+Basque                 Croatian               Czech                  Finnish
+Bosnian                Czech                  Danish                 French (France)
+Bulgarian              Danish                 Dutch                  German
+Catalan                Dutch                  Estonian               Greek
+Croatian               Estonian               Finnish                Hungarian
+Czech                  Finnish                French (France)        Italian
+Danish                 French (France)        German                 Latvian
+Dutch                  German                 Greek                  Lithuanian
+English                Greek                  Hebrew                 Macedonian
+Esperanto              Hebrew                 Hindi                  Norwegian
+Estonian               Hindi                  Hungarian              Portuguese (Portugal)
+Finnish                Hungarian              Indonesian             Russian
+French (France)        Indonesian             Italian                Slovak
+Galician               Italian                Japanese               Slovenian
+Georgian               Japanese               Korean                 Spanish (Spain)
+German                 Klingon                Latvian                Swedish
+Greek                  Korean                 Lithuanian             Turkish
+Gujarati               Latvian                Malay                  Ukrainian
+Hausa                  Lithuanian             Norwegian
+Hebrew                 Malay                  Persian
+Hindi                  Norwegian              Polish
+Hungarian              Persian                Portuguese (Portugal)
+Icelandic              Polish                 Romanian
+Indonesian             Portuguese (Portugal)  Russian
+Irish                  Romanian               Serbian
+Italian                Russian                Slovak
+Japanese               Serbian                Slovenian
+Javanese               Slovak                 Spanish (Spain)
+Kannada                Slovenian              Swahili
+Kazakh                 Spanish (Spain)        Swedish
+Khmer                  Swahili                Thai
+Korean                 Swedish                Turkish
+Lao                    Thai                   Ukrainian
+Latin                  Turkish                Urdu
+Latvian                Ukrainian              Vietnamese
+Lithuanian             Urdu                   Welsh
+Macedonian             Vietnamese             Yiddish
+Malagasy               Welsh
 Malay
-Norwegian (Bokmål)
+Malayalam
+Maori
+Marathi
+Mongolian
 Nepali
-Dutch
-Norwegian (Nynorsk)
 Norwegian
-Punjabi
+Norwegian (Bokmål)
+Norwegian (Nynorsk)
+Persian
 Polish
 Portuguese (Portugal)
+Punjabi
 Romanian
 Russian
+Scottish Gaelic
+Serbian
 Sinhala
 Slovak
 Slovenian
 Somali
-Albanian
-Serbian
+Spanish (Spain)
 Sundanese
+Swahili
 Swedish
-Swahili									
+Tagalog
+Tajik
 Tamil
 Telugu
-Tajik
 Thai
-Tagalog
 Turkish
 Ukrainian
 Urdu
 Uzbek
 Vietnamese
+Welsh
 Yiddish
 Yoruba
 
