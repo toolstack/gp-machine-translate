@@ -1,5 +1,5 @@
 ## 0.8
-* Release date: TBD
+* Release date: September 1, 2016
 * Extract all Google logic from the code to allow for multiple translation services to be supported.
 * Added Microsoft Translator.
 * Added Yandex.Translate.
