@@ -419,7 +419,7 @@ class GP_Machine_Translate {
 	private function transltr_translate_batch( $locale, $strings ) {
 		// If we don't have a supported Yandex translation code, throw an error.
 		if ( ! array_key_exists( $locale, $this->locales ) ) {
-			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s.", $locale->slug, $this->provider ) );
+			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s.", $locale, $this->provider ) );
 		}
 
 		// If we don't have any strings, throw an error.
@@ -467,7 +467,7 @@ class GP_Machine_Translate {
 	private function microsoft_translate_batch( $locale, $strings ) {
 		// If we don't have a supported Microsoft Translator translation code, throw an error.
 		if ( ! array_key_exists( $locale, $this->locales ) ) {
-			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s.", $locale->slug, $this->provider ) );
+			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s.", $locale, $this->provider ) );
 		}
 
 		// If we don't have any strings, throw an error.
@@ -492,7 +492,7 @@ class GP_Machine_Translate {
 	private function yandex_translate_batch( $locale, $strings ) {
 		// If we don't have a supported Yandex translation code, throw an error.
 		if ( ! array_key_exists( $locale, $this->locales ) ) {
-			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s.", $locale->slug, $this->provider ) );
+			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s.", $locale, $this->provider ) );
 		}
 
 		// If we don't have any strings, throw an error.
@@ -558,8 +558,8 @@ class GP_Machine_Translate {
 	// This function contacts Google and translate a set of strings.
 	private function google_translate_batch( $locale, $strings ) {
 		// If we don't have a supported Google translation code, throw an error.
-		if ( ! array_key_exists( $locale->slug, $this->locales ) ) {
-			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s.", $locale->slug, $this->provider ) );
+		if ( ! array_key_exists( $locale, $this->locales ) ) {
+			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s.", $locale, $this->provider ) );
 		}
 
 		// If we don't have any strings, throw an error.
@@ -568,7 +568,7 @@ class GP_Machine_Translate {
 		}
 		
 		// This is the URL of the Google API.
-		$url = 'https://www.googleapis.com/language/translate/v2?key=' . $this->key . '&source=en&target=' . urlencode( $this->locales[$locale->slug] );
+		$url = 'https://www.googleapis.com/language/translate/v2?key=' . $this->key . '&source=en&target=' . urlencode( $this->locales[$locale] );
 
 		// Loop through the stings and add them to the $url as a query string.
 		foreach ( $strings as $string ) {
