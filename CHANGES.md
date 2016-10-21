@@ -1,3 +1,7 @@
+## 0.9
+* Release date: October 21, 2016
+* Fix Google Translate not recognizing supported locales.
+
 ## 0.8
 * Release date: September 1, 2016
 * Extract all Google logic from the code to allow for multiple translation services to be supported.
