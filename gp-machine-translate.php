@@ -53,11 +53,11 @@ class GP_Machine_Translate {
 		$gp_machine_translate_locales = array();
 		
 		if( in_array( $this->provider, $this->providers ) ) {
-			include_once( $provider_includes[$this->provider] );
+			include( $provider_includes[$this->provider] );
 		}
 		
 		$this->locales = $gp_machine_translate_locales;
-	
+
 		// Check to see if there is a user currently logged in.
 		if ( is_user_logged_in() ) {
 			// If someone is logged in, get their user object.
@@ -166,7 +166,7 @@ class GP_Machine_Translate {
 	public function bulk_translate( $project_path ) {
 		// First let's ensure we have decoded the project path for use later.
 		$project_path = urldecode( $project_path );
-		
+
 		// Get the URL to the project for use later.
 		$url = gp_url_project( $project_path );
 
@@ -182,10 +182,17 @@ class GP_Machine_Translate {
 		$project_obj = $project_class->by_path( $project_path );
 		
 		// Get the translations sets from the project ID.
-		$translation_sets = GP::$translation_set->by_project_id( $project_obj->ID );
+		$translation_sets = GP::$translation_set->by_project_id( $project_obj->id	 );
 
 		// Loop through all the sets.
 		foreach( $translation_sets as $set ) {
+			// Get the locale we're working with.
+			$locale = GP_Locales::by_slug( $set->locale );
+			
+			// If the current translation provider doesn't support this locale, skip it.
+			if ( ! array_key_exists( $locale->slug, $this->locales ) ) {
+				continue;
+			}
 			// Create a template array to pass in to the worker function at the end of the loop.
 			$bulk = array( 'action' => 'gp_machine_translate', 'priority' => 0, 'row-ids' => array() );
 			
@@ -193,15 +200,12 @@ class GP_Machine_Translate {
 			$translation = new GP_Translation;
 			
 			// Get the strings for the current translation.
-			$strings = $translation->for_translation( $project_obj, $set, null, array( 'status' => 'untranslated') );
+			$strings = $translation->for_translation( $project_obj, $set, 'no-limit', array( 'status' => 'untranslated') );
 
 			// Add the strings to the $bulk template we setup earlier.
 			foreach( $strings as $string ) {
 				$bulk['row-ids'][] .= $string->row_id;
 			}
-			
-			// Get the locale we're working with.
-			$locale = GP_Locales::by_slug( $set->locale );
 			
 			// Do the actual bulk translation.
 			$this->gp_translation_set_bulk_action_post( $project_obj, $locale, $set, $bulk );
@@ -273,11 +277,6 @@ class GP_Machine_Translate {
 			return;
 		}
 
-		// If we don't have a translation key, just return.
-		if( ! $this->key ) {
-			return;
-		}
-		
 		// Setup some variables to be used during the translation.
 		$provider_errors = 0;
 		$insert_errors = 0;
@@ -289,13 +288,6 @@ class GP_Machine_Translate {
 
 		// Loop through each of the passed in strings and translate them.
 		foreach ( $bulk['row-ids'] as $row_id ) {
-			// check to see if there is a '-' in the $row_id, if not, we should skip it.
-			// gp_in() returns true if the search string is found in the haystack.
-			if ( ! gp_in( '-', $row_id ) ) {
-				$skipped++;
-				continue;
-			}
-
 			// Split the $row_id by '-' and get the first one (which will be the id of the original).
 			$original_id = gp_array_get( explode( '-', $row_id ), 0 );
 			// Get the original based on the above id.
