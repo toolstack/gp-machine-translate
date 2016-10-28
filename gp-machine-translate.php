@@ -203,12 +203,15 @@ class GP_Machine_Translate {
 			$strings = $translation->for_translation( $project_obj, $set, 'no-limit', array( 'status' => 'untranslated') );
 
 			// Add the strings to the $bulk template we setup earlier.
-			foreach( $strings as $string ) {
+			foreach ( $strings as $string ) {
 				$bulk['row-ids'][] .= $string->row_id;
 			}
-			
-			// Do the actual bulk translation.
-			$this->gp_translation_set_bulk_action_post( $project_obj, $locale, $set, $bulk );
+
+			// If we don't have any strings to translate, don't bother calling the translation function.
+			if ( count( $bulk['row-ids'] ) > 0 ) {
+				// Do the actual bulk translation.
+				$this->gp_translation_set_bulk_action_post( $project_obj, $locale, $set, $bulk );
+			}
 		}
 
 		// Redirect back to the project home.
