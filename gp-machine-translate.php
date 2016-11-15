@@ -1,15 +1,16 @@
 <?php
 /*
-Plugin Name: GP Machine Translate
-Plugin URI: http://glot-o-matic.com/gp-machine-translate
-Description: Machine Translate plugin for GlotPress.
-Version: 0.9.5
-Author: Greg Ross
-Author URI: http://toolstack.com
-Tags: glotpress, glotpress plugin, translate, google, bing, yandex, microsoft
-License: GPLv2
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
-*/
+ * Plugin Name: GP Machine Translate
+ * Plugin URI: http://glot-o-matic.com/gp-machine-translate
+ * Description: Machine Translate plugin for GlotPress.
+ * Version: 0.9.5
+ * Author: Greg Ross
+ * Author URI: http://toolstack.com
+ * Tags: glotpress, glotpress plugin, translate, google, bing, yandex, microsoft
+ * License: GPLv2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: gp-machine-translate
+ */
 
 class GP_Machine_Translate {
 	public $id = 'gp-machine-translate';
@@ -25,6 +26,9 @@ class GP_Machine_Translate {
 	private $client_id;
 
 	public function __construct() {
+		// Load the plugin's translated strings.
+		load_plugin_textdomain( 'gp-machine-translate' );
+		
 		// Handle the WordPress user profile items
 		add_action( 'show_user_profile', array( $this, 'show_user_profile' ), 10, 1 );
 		add_action( 'edit_user_profile', array( $this, 'edit_user_profile' ), 10, 1 );
