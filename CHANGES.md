@@ -1,3 +1,13 @@
+## 1.0
+* Release date: November 15, 2016
+* Added timeout for batch translations to help prevent the white screen of death.
+* Added translation domain and translation support.
+* Fixed support for translation engines that don't need a key.
+
+## 0.9.5
+* Release date: October 28, 2016
+* Multiple fixes related to proper detection of support locales and bulk translation.
+
 ## 0.9
 * Release date: October 21, 2016
 * Fix Google Translate not recognizing supported locales.
