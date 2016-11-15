@@ -16,78 +16,86 @@ class GP_Machine_Translate {
 
 	private $version = '0.9.5';
 	private $key;
+	private $key_required = true;
 	private $provider_code = false;
 	private $provider;
 	private	$providers;
 	private $banners;
 	private $locales;
 	private $client_id;
-	
+
 	public function __construct() {
 		// Handle the WordPress user profile items
 		add_action( 'show_user_profile', array( $this, 'show_user_profile' ), 10, 1 );
 		add_action( 'edit_user_profile', array( $this, 'edit_user_profile' ), 10, 1 );
 		add_action( 'personal_options_update', array( $this, 'personal_options_update' ), 10, 1 );
 		add_action( 'edit_user_profile_update', array( $this, 'edit_user_profile_update' ), 10, 1 );
-		
+
 		// Add the admin page to the WordPress settings menu.
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10, 1 );
 
 		$this->providers = array( 'Google Translate', 'Microsoft Translator', 'transltr.org', 'Yandex.Translate' );
 		$this->banners = array( 'Google Translate' => 'Google Translate', 'Microsoft Translator' => 'Microsoft Translator', 'transltr.org' => 'transltr.org', 'Yandex.Translate' => '<a href="http://translate.yandex.com/" target="_blank">Powered by Yandex.Translate</a>' );
 		$provider_includes = array( 'Yandex.Translate' => 'yandex.locales.php', 'Microsoft Translator' => 'microsoft.locales.php', 'Google Translate' => 'google.locales.php', 'transltr.org' => 'transltr.locales.php' );
+		$provider_key_required = array( 'Google Translate' => true, 'Microsoft Translator' => true, 'transltr.org' => false, 'Yandex.Translate' => true );
 
 		if( get_option( 'gp_machine_translate_version', '0.7' ) != $this->version ) {
 			$this->upgrade();
 		}
-		
+
 		// Get the global translate provider from the WordPress options table.
 		$this->provider = get_option( 'gp_machine_translate_provider' );
 
+		// Set the key requirement.
+		$this->key_required = $provider_key_required[$this->provider];
+
 		// Get the global translate key from the WordPress options table.
-		$this->key = get_option('gp_machine_translate_key');
+		$this->key = get_option( 'gp_machine_translate_key' );
 
 		// Get the global translate key from the WordPress options table.
 		$this->client_id = get_option('gp_machine_translate_client_id');
-		
+
 		$gp_machine_translate_locales = array();
-		
+
+		// Inlcude the provider code, otherwise bail out.
 		if( in_array( $this->provider, $this->providers ) ) {
 			include( $provider_includes[$this->provider] );
+		} else {
+			return;
 		}
-		
+
 		$this->locales = $gp_machine_translate_locales;
 
 		// Check to see if there is a user currently logged in.
 		if ( is_user_logged_in() ) {
 			// If someone is logged in, get their user object.
 			$user_obj = wp_get_current_user();
-			
+
 			// Load the user translate key from the WordPress user meta table, using the currently logged in user id.
 			$user_key = get_user_meta( $user_obj->ID, 'gp_machine_translate_key', true );
 			$user_client_id = get_user_meta( $user_obj->ID, 'gp_machine_translate_client_id', true );
-			
+
 			// If there is a user key, override the global key.
-			if( $user_key ) { 
-				$this->key = $user_key; 
-				$this->client_id = $user_client_id; 
+			if( $user_key ) {
+				$this->key = $user_key;
+				$this->client_id = $user_client_id;
 			}
 		}
 
-		// If we didn't find a global or user key, return and don't setup and of the actions.
-		if( false === $this->key ) { return; }
-		
+		// If we didn't find a global or user key and one is required, return and don't setup and of the actions.
+		if( false === $this->key && true == $this->key_required) { return; }
+
 		wp_register_script( 'gp-machine-translate-js', plugins_url( 'gp-machine-translate.js', __FILE__ ), array( 'jquery', 'editor', 'gp-common' ) );
-		
+
 		// If the user has write permissions to the projects, add the bulk translate option to the projects menu.
 		if( GP::$permission->user_can( wp_get_current_user(), 'write', 'project' ) ) {
 			add_action( 'gp_project_actions', array( $this, 'gp_project_actions'), 10, 2 );
 		}
-		
+
 		// Add the actions to handle adding the translate menu to the various parts of GlotPress.
 		add_action( 'gp_pre_tmpl_load', array( $this, 'gp_pre_tmpl_load'), 10, 2);
 		add_filter( 'gp_entry_actions', array( $this, 'gp_entry_actions' ), 10, 1 );
-		add_action( 'gp_translation_set_bulk_action', array( $this, 'gp_translation_set_bulk_action'), 10, 1); 
+		add_action( 'gp_translation_set_bulk_action', array( $this, 'gp_translation_set_bulk_action'), 10, 1);
 		add_action( 'gp_translation_set_bulk_action_post', array( $this, 'gp_translation_set_bulk_action_post'), 10, 4);
 
 		// We can't use the filter in the defaults route code because plugins don't load until after
@@ -95,13 +103,13 @@ class GP_Machine_Translate {
 		GP::$router->add( "/bulk-translate/(.+?)", array( $this, 'bulk_translate' ), 'get' );
 		GP::$router->add( "/bulk-translate/(.+?)", array( $this, 'bulk_translate' ), 'post' );
 	}
-	
+
 	// Generate the HTML when a user views their profile.
 	public function show_user_profile( $user ) {
 		// Show and edit are virtually identical, so just call the edit function.
 		$this->edit_user_profile( $user );
 	}
-	
+
 	// Generate the HTML when a user profile is edited.  Note the $user parameter is a full user object for this function.
 	public function edit_user_profile( $user ) {
 		// Get the current user key from the WordPress options table.
@@ -109,36 +117,36 @@ class GP_Machine_Translate {
 
 		// Get the current user client id from the WordPress options table.
 		$user_client_id = get_user_meta( $user->ID, 'gp_machine_translate_client_id', true );
-		
+
 		// If the user cannot edit their profile, then don't show the settings.
 		if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
 ?>
-	<h3 id="gp-machine-translate"><?php _e('GP Machine Translate'); ?></h3>
+	<h3 id="gp-machine-translate"><?php _e( 'GP Machine Translate', 'gp-machine-translate' ); ?></h3>
 	<table class="form-table">
 		<tr>
-			<th><label for="gp_machine_translate_user_key"><?php _e('User API Key');?></label></th>
+			<th><label for="gp_machine_translate_user_key"><?php _e( 'User API Key', 'gp-machine-translate' );?></label></th>
 			<td>
 			<input type="text" id="gp_machine_translate_user_key" name="gp_machine_translate_user_key" size="40" value="<?php echo htmlentities( $user_key );?>">
-			<p class="description"><?php printf( __( 'Enter the %s API key for this user.' ), $this->provider );?></p>
+			<p class="description"><?php printf( __( 'Enter the %s API key for this user.', 'gp-machine-translate' ), $this->provider );?></p>
 			</td>
 			<tr>
-				<th><label for="gp_machine_translate_user_client_id"><?php _e('Client ID');?></label></th>
+				<th><label for="gp_machine_translate_user_client_id"><?php _e( 'Client ID', 'gp-machine-translate' );?></label></th>
 				<td>
 				<input type="text" id="gp_machine_translate_user_client_id" name="gp_machine_translate_user_client_id" size="40" value="<?php echo htmlentities( $user_client_id );?>">
-				<p class="description"><?php _e('Enter the client ID for this user if using Microsoft Translator.');?></p>
+				<p class="description"><?php _e( 'Enter the client ID for this user if using Microsoft Translator.', 'gp-machine-translate' );?></p>
 				</td>
 			</tr>
 		</tr>
 	</table>
-<?php		
-		
+<?php
+
 	}
-	
+
 	// Once a profile has been updated, this function saves the settings to the WordPress options table.
 	public function personal_options_update( $user_id ) {
 		// If the user cannot edit their profile, then don't save the settings
 		if ( !current_user_can( 'edit_user', $user_id ) ) { return false; }
-		
+
 		// Unlike the profile edit function, we only get the user id passed in as a parameter.
 		update_user_meta( $user_id, 'gp_machine_translate_key', sanitize_text_field( $_POST['gp_machine_translate_user_key'] ) );
 		update_user_meta( $user_id, 'gp_machine_translate_client_id', sanitize_text_field( $_POST['gp_machine_translate_user_client_id'] ) );
@@ -149,14 +157,14 @@ class GP_Machine_Translate {
 		// Since the profile and user edit code is identical, just call the profile update code.
 		return $this->personal_options_update( $user );
 	}
-	
+
 	// This function adds the "Machine Translate" option to the projects menu.
 	public function gp_project_actions( $actions, $project ) {
-		$actions[] .= gp_link_get( gp_url( 'bulk-translate/' . $project->slug), __('Machine Translate') . ' (' . $this->banners[$this->provider] . ')' );
-		
+		$actions[] .= gp_link_get( gp_url( 'bulk-translate/' . $project->slug), __( 'Machine Translate', 'gp-machine-translate' ) . ' (' . $this->banners[$this->provider] . ')' );
+
 		return $actions;
 	}
-	
+
 	// This function is here as placeholder to support adding the bulk translate option to the router.
 	// Without this placeholder there is a fatal error generated.
 	public function before_request() {
@@ -177,28 +185,39 @@ class GP_Machine_Translate {
 
 		// Create a project class to use to get the project object.
 		$project_class = new GP_Project;
-		
+
 		// Get the project object from the project path that was passed in.
 		$project_obj = $project_class->by_path( $project_path );
-		
+
 		// Get the translations sets from the project ID.
 		$translation_sets = GP::$translation_set->by_project_id( $project_obj->id	 );
 
+		// Since there might be a lot of translations to process in a batch, let's setup some time limits
+		// to make sure we don't give a white screen of death to the user.
+		$time_start = microtime( true );
+		$max_exec_time = ini_get( 'max_execution_time' ) * 0.7;
+
 		// Loop through all the sets.
 		foreach( $translation_sets as $set ) {
+			// Check to see how our time is doing, if we're over out time limit, stop processing.
+			if ( microtime( true ) - $time_start > $max_exec_time ) {
+				gp_notice_set( __( 'Not all strings translated as we ran out of execution time!', 'gp-machine-translate' ) );
+				break;
+			}
+
 			// Get the locale we're working with.
 			$locale = GP_Locales::by_slug( $set->locale );
-			
+
 			// If the current translation provider doesn't support this locale, skip it.
 			if ( ! array_key_exists( $locale->slug, $this->locales ) ) {
 				continue;
 			}
 			// Create a template array to pass in to the worker function at the end of the loop.
 			$bulk = array( 'action' => 'gp_machine_translate', 'priority' => 0, 'row-ids' => array() );
-			
+
 			// Create a new GP_Translation object to use.
 			$translation = new GP_Translation;
-			
+
 			// Get the strings for the current translation.
 			$strings = $translation->for_translation( $project_obj, $set, 'no-limit', array( 'status' => 'untranslated') );
 
@@ -226,10 +245,10 @@ class GP_Machine_Translate {
 	// This function loads the javascript when required.
 	public function gp_pre_tmpl_load( $template, $args ) {
 		// If we don't have a translation key, just return without doing anything.
-		if( ! $this->key ) {
+		if( ! $this->key && $this->key_required ) {
 			return;
 		}
-		
+
 		// If we're not on the translation template, just return without doing anything.
 		if ( 'translations' != $template ) {
 			return;
@@ -246,7 +265,7 @@ class GP_Machine_Translate {
 			'locale'  => $this->locales[$args['locale']->slug],
 			'ajaxurl' => admin_url( 'admin-ajax.php'),
 		);
-		
+
 		// Set the current Google code to the locale we're dealing with.
 		$this->provider_code = $this->locales[$args['locale']->slug];
 
@@ -259,7 +278,7 @@ class GP_Machine_Translate {
 	public function gp_entry_actions( $actions ) {
 		// Make sure we are currently on a supported locale.
 		if ( $this->provider_code ) {
-			$actions[] = '<a href="#" class="gp_machine_translate" tabindex="-1">' . __('Machine Translate') . '</a> (' . $this->banners[$this->provider] . ')';
+			$actions[] = '<a href="#" class="gp_machine_translate" tabindex="-1">' . __( 'Machine Translate', 'gp-machine-translate' ) . '</a> (' . $this->banners[$this->provider] . ')';
 		}
 
 		return $actions;
@@ -269,7 +288,7 @@ class GP_Machine_Translate {
 	public function gp_translation_set_bulk_action() {
 		// Make sure we are currently on a supported locale.
 		if ( $this->provider_code ) {
-			echo '<option value="gp_machine_translate">' . __('Machine Translate') . ' (' . $this->banners[$this->provider] . ')' . '</option>';
+			echo '<option value="gp_machine_translate">' . __( 'Machine Translate', 'gp-machine-translate' ) . ' (' . $this->banners[$this->provider] . ')' . '</option>';
 		}
 	}
 
@@ -358,22 +377,22 @@ class GP_Machine_Translate {
 
 			// Did we have any strings translated successfully?
 			if ( $ok ) {
-				$message[] = sprintf( __('Added: %d.' ), $ok );
+				$message[] = sprintf( __( 'Added: %d.', 'gp-machine-translate' ), $ok );
 			}
 
 			// Did we have any provider errors.
 			if ( $provider_errors ) {
-				$message[] = sprintf( __('Error from %s: %d.' ), $this->provider, $provider_errors );
+				$message[] = sprintf( __( 'Error from %s: %d.', 'gp-machine-translate' ), $this->provider, $provider_errors );
 			}
 
 			// Did we have any errors when we saved everything to the database?
 			if ( $insert_errors ) {
-				$message[] = sprintf( __('Error adding: %d.' ), $insert_errors );
+				$message[] = sprintf( __( 'Error adding: %d.', 'gp-machine-translate' ), $insert_errors );
 			}
 
 			// Did we skip any items?
 			if ( $skipped ) {
-				$message[] = sprintf( __('Skipped: %d.' ), $skipped );
+				$message[] = sprintf( __( 'Skipped: %d.', 'gp-machine-translate' ), $skipped );
 			}
 
 			// Create a message string and add it to the GlotPress notices.
@@ -381,36 +400,36 @@ class GP_Machine_Translate {
 		}
 		else {
 			// If we didn't get any errors, then we just need to let the user know how many translations were added.
-			gp_notice_set( sprintf( __('%d fuzzy translation from Machine Translate were added.' ), $ok ) );
+			gp_notice_set( sprintf( __( '%d fuzzy translation from Machine Translate were added.', 'gp-machine-translate' ), $ok ) );
 		}
 	}
 
 	public function translate_batch( $locale, $strings ) {
-		
+
 		if( is_object( $locale ) ) {
 			$locale = $locale->slug;
 		}
-		
+
 		switch( $this->provider ) {
 			case 'Google Translate':
 				return $this->google_translate_batch( $locale, $strings );
-				
+
 				break;
 			case 'Microsoft Translator':
 				return $this->microsoft_translate_batch( $locale, $strings );
-				
+
 				break;
 			case 'transltr.org':
 				return $this->transltr_translate_batch( $locale, $strings );
-			
+
 				break;
 			case 'Yandex.Translate':
 				return $this->yandex_translate_batch( $locale, $strings );
-				
+
 				break;
 		}
 	}
-	
+
 	private function transltr_translate_batch( $locale, $strings ) {
 		// If we don't have a supported Yandex translation code, throw an error.
 		if ( ! array_key_exists( $locale, $this->locales ) ) {
@@ -451,14 +470,14 @@ class GP_Machine_Translate {
 			if ( isset( $json->error ) ) {
 				return new WP_Error( 'gp_machine_translate', sprintf( 'Error auto-translating: %1$s', $json->error->errors[0]->message ) );
 			}
-			
+
 			$translations[] = $this->google_translate_fix( $json->translationText );
 		}
 
 		// Return the results.
 		return $translations;
 	}
-	
+
 	private function microsoft_translate_batch( $locale, $strings ) {
 		// If we don't have a supported Microsoft Translator translation code, throw an error.
 		if ( ! array_key_exists( $locale, $this->locales ) ) {
@@ -470,16 +489,16 @@ class GP_Machine_Translate {
 			return new WP_Error( 'gp_machine_translate', "No strings found to translate." );
 		}
 
-		
+
 		include( dirname( __FILE__ ) . '/vendor/autoload.php' );
-		
+
 		$config = array(
 			'clientID' => $this->client_id,
 			'clientSecret' => $this->key,
 		);
 		$t = new \MicrosoftTranslator\Translate( $config );
 		$translation = $t->translate( $strings, $this->locales[$locale], 'en' );
-		
+
 		return $translation;
 
 	}
@@ -538,7 +557,7 @@ class GP_Machine_Translate {
 		if ( ! $items ) {
 			return new WP_Error( 'gp_machine_translate', 'Error merging arrays' );
 		}
-		
+
 		// Loop through the items and clean up the responses.
 		foreach ( $items as $item ) {
 			list( $string, $translation ) = $item;
@@ -549,7 +568,7 @@ class GP_Machine_Translate {
 		// Return the results.
 		return $translations;
 	}
-	
+
 	// This function contacts Google and translate a set of strings.
 	private function google_translate_batch( $locale, $strings ) {
 		// If we don't have a supported Google translation code, throw an error.
@@ -561,7 +580,7 @@ class GP_Machine_Translate {
 		if ( count( $strings ) == 0 ) {
 			return new WP_Error( 'gp_machine_translate', "No strings found to translate." );
 		}
-		
+
 		// This is the URL of the Google API.
 		$url = 'https://www.googleapis.com/language/translate/v2?key=' . $this->key . '&source=en&target=' . urlencode( $this->locales[$locale] );
 
@@ -626,101 +645,101 @@ class GP_Machine_Translate {
 	private function google_translate_fix( $string ) {
 		$string = preg_replace_callback( '/% (s|d)/i', function ($m) { return '"%".strtolower($m[1])'; }, $string );
 		$string = preg_replace_callback( '/% (\d+) \$ (s|d)/i', function ($m) { return '"%".$m[1]."\\$".strtolower($m[2])'; }, $string );
-		
+
 		return $string;
 	}
-	
+
 	// This function adds the admin settings page to WordPress.
 	public function admin_menu() {
-		add_options_page( __('GP Machine Translate'), __('GP Machine Translate'), 'manage_options', basename( __FILE__ ), array( $this, 'admin_page' ) );
+		add_options_page( __( 'GP Machine Translate', 'gp-machine-translate' ), __( 'GP Machine Translate', 'gp-machine-translate' ), 'manage_options', basename( __FILE__ ), array( $this, 'admin_page' ) );
 	}
-	
+
 	// This function displays the admin settings page in WordPress.
 	public function admin_page() {
 		// If the current user can't manage options, display a message and return immediately.
-		if( ! current_user_can( 'manage_options' ) ) { _e('You do not have permissions to this page!'); return; }
-		
+		if( ! current_user_can( 'manage_options' ) ) { _e( 'You do not have permissions to this page!', 'gp-machine-translate' ); return; }
+
 		// If the user has saved the settings, commit them to the database.
 		if( array_key_exists( 'save_gp_machine_transalate', $_POST ) ) {
 			// Flush the global key, in case the user is removing the API key.
 			$this->key = '';
-			
+
 			// If the API key value is being saved, store it in the global key setting.
 			if( array_key_exists( 'gp_machine_translate_key', $_POST ) ) {
 				// Make sure to sanitize the data before saving it.
 				$this->key = sanitize_text_field( $_POST['gp_machine_translate_key'] );
-			}	
-			
+			}
+
 			// If the client ID value is being saved, store it in the global key setting.
 			if( array_key_exists( 'gp_machine_translate_client_id', $_POST ) ) {
 				// Make sure to sanitize the data before saving it.
 				$this->client_id = sanitize_text_field( $_POST['gp_machine_translate_client_id'] );
-			}	
+			}
 
 			$provider = $_POST['gp_machine_translate_provider'];
-			
-			if( $provider != '*Select*' && in_array( $provider, $this->providers ) ) {
+
+			if( $provider != __( '*Select*', 'gp-machine-translate' ) && in_array( $provider, $this->providers ) ) {
 				update_option( 'gp_machine_translate_provider', $provider );
 				$this->provider = $provider;
 			}
-			
+
 			// Update the option in the database.
 			update_option( 'gp_machine_translate_key', $this->key );
-			
+
 			// Update the client ID>
 			update_option( 'gp_machine_translate_client_id', $this->client_id );
 		}
-		
-	?>	
-<div class="wrap">
-	<h2><?php _e('GP Machine Translate Settings');?></h2>
 
-	<form method="post" action="options-general.php?page=gp-machine-translate.php" >	
+	?>
+<div class="wrap">
+	<h2><?php _e( 'GP Machine Translate Settings', 'gp-machine-translate' );?></h2>
+
+	<form method="post" action="options-general.php?page=gp-machine-translate.php" >
 		<table class="form-table">
 			<tr>
-				<th><label for="gp_machine_translate_provider"><?php _e('Translation Provider');?></label></th>
+				<th><label for="gp_machine_translate_provider"><?php _e( 'Translation Provider', 'gp-machine-translate' );?></label></th>
 				<td>
 				<select id="gp_machine_translate_provider" name="gp_machine_translate_provider">
-					<option value="">*Select*</option>
+					<option value=""><?php _e( '*Select*', 'gp-machine-translate' ); ?></option>
 <?php
 					foreach( $this->providers as $provider ) {
 						$selected = '';
 						if( $this->provider == $provider ) { $selected = " selected"; }
-						
+
 						echo '					<option value="' . $provider . '"' . $selected . '>' . $provider . '</option>';
 					}
 ?>
 				</select>
-				<p class="description"><?php _e('Select the translation provider to use.');?></p>
+				<p class="description"><?php _e( 'Select the translation provider to use.', 'gp-machine-translate' );?></p>
 				</td>
 			</tr>
 			<tr>
-				<th><label for="gp_machine_translate_key"><?php _e('Global API Key');?></label></th>
+				<th><label for="gp_machine_translate_key"><?php _e( 'Global API Key', 'gp-machine-translate' );?></label></th>
 				<td>
 				<input type="text" id="gp_machine_translate_key" name="gp_machine_translate_key" size="40" value="<?php echo htmlentities( $this->key );?>">
-				<p class="description"><?php _e('Enter the API key for all users (leave blank to disable, per user API keys will still function).');?></p>
+				<p class="description"><?php _e( 'Enter the API key for all users (leave blank to disable, per user API keys will still function).', 'gp-machine-translate' );?></p>
 				</td>
 			</tr>
 			<tr>
-				<th><label for="gp_machine_translate_client_id"><?php _e('Client ID');?></label></th>
+				<th><label for="gp_machine_translate_client_id"><?php _e( 'Client ID', 'gp-machine-translate');?></label></th>
 				<td>
 				<input type="text" id="gp_machine_translate_client_id" name="gp_machine_translate_client_id" size="40" value="<?php echo htmlentities( $this->client_id );?>">
-				<p class="description"><?php _e('Enter the client ID if using Microsoft Translator.');?></p>
+				<p class="description"><?php _e( 'Enter the client ID if using Microsoft Translator.', 'gp-machine-translate' );?></p>
 				</td>
 			</tr>
 		</table>
-		
-		<?php submit_button( __('Save'), 'primary', 'save_gp_machine_transalate' ); ?>
-		
+
+		<?php submit_button( __( 'Save', 'gp-machine-translate' ), 'primary', 'save_gp_machine_transalate' ); ?>
+
 	</form>
-	
+
 </div>
-<?php		
+<?php
 	}
-	
+
 	private function upgrade() {
 		GLOBAL $wpdb;
-		
+
 		// If the old google key exists, update it to the new option name and remove it.
 		// On the next upgrade this code will not run.
 		// To be removed in a future version once we're well past version 0.7.
@@ -729,12 +748,12 @@ class GP_Machine_Translate {
 			update_option( 'gp_machine_translate_key', get_option( 'gp_google_translate_key', false ) );
 			delete_option( 'gp_google_translate_key' );
 		}
-		
+
 		// Rename the per use translation key name.  We can't do this in the "if" above as the global key
 		// may be set to blank but user keys may still exist, so we have to do this on each upgrade.
 		// To be removed in a future version once we're well past version 0.7.
 		$wpdb->query( "UPDATE {$wpdb->usermeta} SET `meta_key`='gp_machine_translate_key' WHERE `meta_key`='gp_google_translate_key';" );
-			
+
 		// Update the version option to the current version so we don't run the upgrade process again.
 		update_option( 'gp_machine_translate_version', $this->version );
 	}
@@ -748,6 +767,6 @@ include_once( 'ajax.php' );
 // This function creates the plugin.
 function gp_machine_translate_init() {
 	GLOBAL $gp_machine_translate;
-	
+
 	$gp_machine_translate = new GP_Machine_Translate;
 }
