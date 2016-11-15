@@ -51,7 +51,7 @@ The public access key is what you will use to configure GP Machine Translate wit
 
 Microsoft Translator requires an API key to function, to do this you must register with Microsoft.  Microsoft does have a free tier for translation, limited to 2 million characters a month so you do not need to provide payment details for this tier.
 
-Microsoft has a walkthrough on how to subscribe to the Translator service here:
+Microsoft has a walk through on how to subscribe to the Translator service here:
 
 	https://www.microsoft.com/en-us/translator/getstarted.aspx
 	
