@@ -1,0 +1,11 @@
+/build/tmp
+/dev/
+/dist/
+/docker/.env
+/tests/_data/
+/tests/_output/
+/tests/_support/_generated/
+.idea/
+.php_cs.cache
+node_modules
+vendor
