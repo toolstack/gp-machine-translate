@@ -1,0 +1,12 @@
+{
+    "name": "borlabs/borlabs-cookie-tools-phpstan",
+    "license": "proprietary",
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
+    },
+    "require": {
+        "phpstan/phpstan": "^0.12.80"
+    }
+}

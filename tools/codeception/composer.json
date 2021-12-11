@@ -1,0 +1,28 @@
+{
+    "name": "borlabs/borlabs-cookie-tools-codeception",
+    "license": "proprietary",
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "BorlabsAcceptance\\": "/var/www/tests/acceptance/BorlabsAcceptance",
+            "BorlabsWPUnit\\": "/var/www/tests/wpunit/BorlabsWPUnit"
+        }
+    },
+    "require": {
+        "lucatume/wp-browser": "3.0.5.1",
+        "codeception/module-asserts": "^1.0",
+        "codeception/module-phpbrowser": "^1.0",
+        "codeception/module-webdriver": "^1.0",
+        "codeception/module-db": "^1.0",
+        "codeception/module-filesystem": "^1.0",
+        "codeception/module-cli": "^1.0",
+        "codeception/util-universalframework": "^1.0",
+        "vlucas/phpdotenv": "^5.3",
+        "mockery/mockery": "^1.4",
+        "fakerphp/faker": "^1.14"
+    }
+}

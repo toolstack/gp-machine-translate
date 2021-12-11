@@ -1,0 +1,12 @@
+{
+    "name": "borlabs/borlabs-cookie-tools-phpinsights",
+    "license": "proprietary",
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
+    },
+    "require": {
+        "nunomaduro/phpinsights": "^1.14"
+    }
+}

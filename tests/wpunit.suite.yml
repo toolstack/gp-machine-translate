@@ -1,0 +1,42 @@
+actor: WpunitTester
+modules:
+    enabled:
+        - WPDb
+        - WPLoader
+        - WPFilesystem
+        - \Helper\Wpunit
+    config:
+        WPDb:
+            dsn: 'mysql:host=%MYSQL_HOST%;port=%MYSQL_PORT%;dbname=%WORDPRESS_DATABASE_SINGLE_TEST%_wpunit'
+        WPLoader:
+            dbName: '%WORDPRESS_DATABASE_SINGLE_TEST%_wpunit'
+env:
+    single:
+        modules:
+            config:
+                WPDb:
+                    dsn: 'mysql:host=%MYSQL_HOST%;port=%MYSQL_PORT%;dbname=%WORDPRESS_DATABASE_SINGLE%_wpunit'
+                    dump: '../../tests/_data/dump-single.sql'
+                    populate: true
+                WPLoader:
+                    dbName: '%WORDPRESS_DATABASE_SINGLE%_wpunit'
+    single_test:
+    # nothing - this is default
+    multi:
+        modules:
+            config:
+                WPDb:
+                    dsn: 'mysql:host=%MYSQL_HOST%;port=%MYSQL_PORT%;dbname=%WORDPRESS_DATABASE_MULTI%_wpunit'
+                    dump: '../../tests/_data/dump-multi.sql'
+                    populate: true
+                WPLoader:
+                    dbName: '%WORDPRESS_DATABASE_MULTI%_wpunit'
+    multi_test:
+        modules:
+            config:
+                WPDb:
+                    dsn: 'mysql:host=%MYSQL_HOST%;port=%MYSQL_PORT%;dbname=%WORDPRESS_DATABASE_MULTI_TEST%_wpunit'
+                    dump: '../../tests/_data/dump-multi-test.sql'
+                    populate: true
+                WPLoader:
+                    dbName: '%WORDPRESS_DATABASE_MULTI_TEST%_wpunit'

@@ -1,0 +1,115 @@
+paths:
+    tests: ../../tests
+    output: ../../tests/_output
+    data: ../../tests/_data
+    support: ../../tests/_support
+    envs: ../../tests/_envs
+actor_suffix: Tester
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed
+    commands:
+        - Codeception\Command\GenerateWPUnit
+        - Codeception\Command\GenerateWPRestApi
+        - Codeception\Command\GenerateWPRestController
+        - Codeception\Command\GenerateWPRestPostTypeController
+        - Codeception\Command\GenerateWPAjax
+        - Codeception\Command\GenerateWPCanonical
+        - Codeception\Command\GenerateWPXMLRPC
+coverage:
+    enabled: true
+    include:
+        - ../../html/wp-content/plugins/gp-machine-translate/*
+params:
+    - ../../.env
+modules:
+    config:
+        WPDb:
+            dsn: 'mysql:host=%MYSQL_HOST%;port=%MYSQL_PORT%;dbname=%WORDPRESS_DATABASE_SINGLE_TEST%'
+            user: '%MYSQL_USER%'
+            password: '%MYSQL_PASSWORD%'
+            dump: '../../tests/_data/dump-single-test.sql'
+            populate: true
+            cleanup: false
+            waitlock: 10
+            url: 'https://%WORDPRESS_HOST_SINGLE_TEST%'
+            urlReplacement: false
+            tablePrefix: '%WORDPRESS_TABLE_PREFIX%'
+        WPFilesystem:
+            wpRootFolder: '/var/www/html/'
+            plugins: '/var/www/html/wp-content/plugins/'
+            mu-plugins: '/var/www/html/wp-content/mu-plugins/'
+            themes: '/var/www/html/wp-content/themes/'
+            uploads: '/var/www/html/wp-content/uploads/'
+        WPWebDriver:
+            url: 'https://%WORDPRESS_HOST_SINGLE_TEST%'
+            host: 'selenium-hub'
+            adminUsername: '%WORDPRESS_ADMIN_USERNAME%'
+            adminPassword: '%WORDPRESS_ADMIN_PASSWORD%'
+            adminPath: '/wp-admin'
+            browser: chrome
+            port: 4444
+            restart: false # true: every single test starts a new window
+            wait: 2
+            window_size: 1280x960
+            capabilities:
+                "goog:chromeOptions":
+                    args: [ "--no-sandbox", "--ignore-certificate-errors", "--user-agent=wp-browser" ]
+                    #args: [ "--no-sandbox", "--headless", "--disable-gpu", "--ignore-certificate-errors", "--user-agent=wp-browser" ]
+        WPLoader:
+            wpRootFolder: '/var/www/html'
+            dbName: '%WORDPRESS_DATABASE_SINGLE_TEST%'
+            dbHost: '%MYSQL_HOST%'
+            dbUser: '%MYSQL_USER%'
+            dbPassword: '%MYSQL_PASSWORD%'
+            tablePrefix: '%WORDPRESS_TABLE_PREFIX%'
+            domain: '%WORDPRESS_HOST_SINGLE_TEST%'
+            loadOnly: false # false: bootstrap WordPress and all DB operations will be rolled back. true: DB changes are persistent.
+            plugins:
+                - 'gp-machine-translate/gp-machine-translate.php'
+            activatePlugins:
+                - 'gp-machine-translate/gp-machine-translate.php'
+env:
+    single:
+        modules:
+            config:
+                WPDb:
+                    dsn: 'mysql:host=%MYSQL_HOST%;port=%MYSQL_PORT%;dbname=%WORDPRESS_DATABASE_SINGLE%'
+                    populate: false # We do not want our workspace to be overwritten.
+                    cleanup: false
+                    url: 'https://%WORDPRESS_HOST_SINGLE%'
+                WPWebDriver:
+                    url: 'https://%WORDPRESS_HOST_SINGLE%'
+                WPLoader:
+                    dbName: '%WORDPRESS_DATABASE_SINGLE%'
+                    domain: '%WORDPRESS_HOST_SINGLE%'
+                    loadOnly: true
+    single_test:
+    # nothing - this is default
+    multi:
+        modules:
+            config:
+                WPDb:
+                    dsn: 'mysql:host=%MYSQL_HOST%;port=%MYSQL_PORT%;dbname=%WORDPRESS_DATABASE_MULTI%'
+                    populate: false # We do not want our workspace to be overwritten.
+                    cleanup: false
+                    url: 'https://%WORDPRESS_HOST_MULTI%'
+                WPWebDriver:
+                    url: 'https://%WORDPRESS_HOST_MULTI%'
+                WPLoader:
+                    dbName: '%WORDPRESS_DATABASE_MULTI%'
+                    domain: '%WORDPRESS_HOST_MULTI%'
+                    loadOnly: true
+    multi_test:
+        modules:
+            config:
+                WPDb:
+                    dsn: 'mysql:host=%MYSQL_HOST%;port=%MYSQL_PORT%;dbname=%WORDPRESS_DATABASE_MULTI_TEST%'
+                    dump: '../../tests/_data/dump-multi-test.sql'
+                    url: 'https://%WORDPRESS_HOST_MULTI_TEST%'
+                WPWebDriver:
+                    url: 'https://%WORDPRESS_HOST_MULTI_TEST%'
+                WPLoader:
+                    dbName: '%WORDPRESS_DATABASE_MULTI_TEST%'
+                    domain: '%WORDPRESS_HOST_MULTI_TEST%'
+#WPUnit admin password is 'password'

@@ -1,0 +1,184 @@
+version: '3'
+networks:
+    frontend:
+        name: ${EXTERNAL_FRONTEND_NETWORK}
+        external: true
+    backend_wordpress:
+services:
+    db:
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        restart: always
+        ports:
+            - ${HOST_MYSQL_PORT}:${MYSQL_PORT}
+        volumes:
+            - db:/var/lib/mysql
+        networks:
+            - backend_wordpress
+    wp_single:
+        build:
+            context: ..
+            dockerfile: ${DOCKERFILE}
+        depends_on:
+            - db
+        env_file: .env
+        environment:
+            INSTALLER: single
+            PRESET: default-single
+        user: "33:33"
+        restart: always
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=${EXTERNAL_FRONTEND_NETWORK}"
+            # http
+            - "traefik.http.routers.gp-machine-translate-single.rule=Host(`${WORDPRESS_HOST_SINGLE}`)"
+            - "traefik.http.routers.gp-machine-translate-single.entrypoints=web"
+            # https
+            - "traefik.http.routers.gp-machine-translate-single-https.rule=Host(`${WORDPRESS_HOST_SINGLE}`)"
+            - "traefik.http.routers.gp-machine-translate-single-https.entrypoints=websecure"
+            - "traefik.http.routers.gp-machine-translate-single-https.tls=true"
+        volumes:
+            - ./config/php/opcache.ini:/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini:cached
+            - ./config/php/php.ini:/usr/local/etc/php/conf.d/php.ini:cached
+            - ./config/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:cached
+            - ./.env:/var/www/.env:ro
+            - ../dev/single/logs:/tmp/logs:delegated
+            - ../dev/single/wordpress:/var/www/html:delegated
+            - ../src:/var/www/html/wp-content/plugins/gp-machine-translate
+            - ../tests/_data/single:/var/www/tests/_data:delegated
+            - ../tests/_output/single:/var/www/tests/_output:delegated
+            - ../tests/_support:/var/www/tests/_support:cached
+            - ../tests/acceptance:/var/www/tests/acceptance
+            - ../tests/acceptance.suite.yml:/var/www/tests/acceptance.suite.yml:cached
+            - ../tests/wpunit:/var/www/tests/wpunit
+            - ../tests/wpunit.suite.yml:/var/www/tests/wpunit.suite.yml:cached
+            - ../tools:/var/www/tools:cached
+        networks:
+            - backend_wordpress
+            - frontend
+    wp_single_test:
+        build:
+            context: ..
+            dockerfile: ${DOCKERFILE}
+        depends_on:
+            - db
+        env_file: .env
+        environment:
+            INSTALLER: single-test
+            PRESET: default-single
+        user: "33:33"
+        restart: always
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=${EXTERNAL_FRONTEND_NETWORK}"
+            # http
+            - "traefik.http.routers.gp-machine-translate-single-test.rule=Host(`${WORDPRESS_HOST_SINGLE_TEST}`)"
+            - "traefik.http.routers.gp-machine-translate-single-test.entrypoints=web"
+            # https
+            - "traefik.http.routers.gp-machine-translate-single-test-https.rule=Host(`${WORDPRESS_HOST_SINGLE_TEST}`)"
+            - "traefik.http.routers.gp-machine-translate-single-test-https.entrypoints=websecure"
+            - "traefik.http.routers.gp-machine-translate-single-test-https.tls=true"
+        volumes:
+            - ./config/php/opcache.ini:/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini:cached
+            - ./config/php/php.ini:/usr/local/etc/php/conf.d/php.ini:cached
+            - ./config/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:cached
+            - ./.env:/var/www/.env:ro
+            - ../dev/single-test/logs:/tmp/logs:delegated
+            - ../dist:/var/www/dist:cached
+            - ../tests/_data/single-test:/var/www/tests/_data:delegated
+            - ../tests/_output/single-test:/var/www/tests/_output:delegated
+            - ../tests/_support:/var/www/tests/_support:cached
+            - ../tests/acceptance:/var/www/tests/acceptance
+            - ../tests/acceptance.suite.yml:/var/www/tests/acceptance.suite.yml:cached
+            - ../tests/wpunit:/var/www/tests/wpunit
+            - ../tests/wpunit.suite.yml:/var/www/tests/wpunit.suite.yml:cached
+            - ../tools:/var/www/tools:cached
+        networks:
+            - backend_wordpress
+            - frontend
+    wp_multi:
+        build:
+            context: ..
+            dockerfile: ${DOCKERFILE}
+        depends_on:
+            - db
+        env_file: .env
+        environment:
+            INSTALLER: multi
+            PRESET: default-multi
+        user: "33:33"
+        restart: always
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=${EXTERNAL_FRONTEND_NETWORK}"
+            # http
+            - "traefik.http.routers.gp-machine-translate-multi.rule=Host(`${WORDPRESS_HOST_MULTI}`)"
+            - "traefik.http.routers.gp-machine-translate-multi.entrypoints=web"
+            # https
+            - "traefik.http.routers.gp-machine-translate-multi-https.rule=Host(`${WORDPRESS_HOST_MULTI}`)"
+            - "traefik.http.routers.gp-machine-translate-multi-https.entrypoints=websecure"
+            - "traefik.http.routers.gp-machine-translate-multi-https.tls=true"
+        volumes:
+            - ./config/php/opcache.ini:/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini:cached
+            - ./config/php/php.ini:/usr/local/etc/php/conf.d/php.ini:cached
+            - ./config/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:cached
+            - ./.env:/var/www/.env:ro
+            - ../dev/multi/logs:/tmp/logs:delegated
+            - ../dev/multi/wordpress:/var/www/html:delegated
+            - ../src:/var/www/html/wp-content/plugins/gp-machine-translate
+            - ../tests/_data/multi:/var/www/tests/_data:delegated
+            - ../tests/_output/multi:/var/www/tests/_output:delegated
+            - ../tests/_support:/var/www/tests/_support:cached
+            - ../tests/acceptance:/var/www/tests/acceptance
+            - ../tests/acceptance.suite.yml:/var/www/tests/acceptance.suite.yml:cached
+            - ../tests/wpunit:/var/www/tests/wpunit
+            - ../tests/wpunit.suite.yml:/var/www/tests/wpunit.suite.yml:cached
+            - ../tools:/var/www/tools:cached
+        networks:
+            - backend_wordpress
+            - frontend
+    wp_multi_test:
+        build:
+            context: ..
+            dockerfile: ${DOCKERFILE}
+        depends_on:
+            - db
+        env_file: .env
+        environment:
+            INSTALLER: multi-test
+            PRESET: default-multi
+        user: "33:33"
+        restart: always
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=${EXTERNAL_FRONTEND_NETWORK}"
+            # http
+            - "traefik.http.routers.gp-machine-translate-multi-test.rule=Host(`${WORDPRESS_HOST_MULTI_TEST}`)"
+            - "traefik.http.routers.gp-machine-translate-multi-test.entrypoints=web"
+            # https
+            - "traefik.http.routers.gp-machine-translate-multi-test-https.rule=Host(`${WORDPRESS_HOST_MULTI_TEST}`)"
+            - "traefik.http.routers.gp-machine-translate-multi-test-https.entrypoints=websecure"
+            - "traefik.http.routers.gp-machine-translate-multi-test-https.tls=true"
+        volumes:
+            - ./config/php/opcache.ini:/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini:cached
+            - ./config/php/php.ini:/usr/local/etc/php/conf.d/php.ini:cached
+            - ./config/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:cached
+            - ./.env:/var/www/.env:ro
+            - ../dev/multi-test/logs:/tmp/logs:delegated
+            - ../dist:/var/www/dist:cached
+            - ../tests/_data/multi-test:/var/www/tests/_data:delegated
+            - ../tests/_output/multi-test:/var/www/tests/_output:delegated
+            - ../tests/_support:/var/www/tests/_support:cached
+            - ../tests/acceptance:/var/www/tests/acceptance
+            - ../tests/acceptance.suite.yml:/var/www/tests/acceptance.suite.yml:cached
+            - ../tests/wpunit:/var/www/tests/wpunit
+            - ../tests/wpunit.suite.yml:/var/www/tests/wpunit.suite.yml:cached
+            - ../tools:/var/www/tools:cached
+        networks:
+            - backend_wordpress
+            - frontend
+volumes:
+    db:
