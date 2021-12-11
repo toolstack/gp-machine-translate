@@ -521,7 +521,7 @@ class GP_Machine_Translate {
             return new WP_Error( 'gp_machine_translate', "No strings found to translate." );
         }
 
-        // If we have too any strings, throw an error.
+        // If we have too many strings, throw an error.
         if ( count( $strings ) > 50 ) {
             return new WP_Error( 'gp_machine_translate', "Only 50 strings allowed." );
         }
@@ -547,7 +547,7 @@ class GP_Machine_Translate {
         // Decode the response from DeepL.
         $json = json_decode( wp_remote_retrieve_body( $response ) );
 
-        // If something went wrong with the response from Yandex, throw an error.
+        // If something went wrong with the response from DeepL, throw an error.
         if ( ! $json ) {
             return new WP_Error( 'gp_machine_translate', 'Error decoding JSON from DeepL Translate.' );
         }
