@@ -23,7 +23,7 @@ You will have three Fields to configure:
 	
 You can select from four providers with some requiring the additional fields to be filled in.
 
-= DeepL =
+## DeepL
 
 DeepL requires a DeepL API Pro account.
 
