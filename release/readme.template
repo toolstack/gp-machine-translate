@@ -18,6 +18,7 @@ A machine translate plugin for [GlotPress as a WordPress plugin](https://github.
 
 Four machine translation providers are supported (though only one at a time):
 
+* DeepL (pay per character, Pro account required)
 * Google Translate (pay per character)
 * Microsoft Translator (free tier available)
 * translte.org (free)
@@ -36,6 +37,14 @@ You will have three Fields to configure:
 	3. Client ID
 	
 You can select from four providers with some requiring the additional fields to be filled in.
+
+= DeepL =
+
+DeepL requires a DeepL API Pro account.
+
+* Login/signup [DeepL API Pro](https://www.deepl.com/pro)
+* Go to your account and scroll down to [Authentication Key for DeepL API](https://www.deepl.com/pro-account/summary)
+* Copy the `Authentication Key` and put it into `Global API Key` of GP Machine Translate.
 
 = Google =
 
