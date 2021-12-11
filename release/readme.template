@@ -16,7 +16,7 @@ A machine translate plugin for GlotPress as a WordPress plugin.
 
 A machine translate plugin for [GlotPress as a WordPress plugin](https://github.com/GlotPress/GlotPress-WP).
 
-Four machine translation providers are supported (though only one at a time):
+Five machine translation providers are supported (though only one at a time):
 
 * DeepL (pay per character, Pro account required)
 * Google Translate (pay per character)
@@ -36,7 +36,7 @@ You will have three Fields to configure:
 	2. Global API Key
 	3. Client ID
 	
-You can select from four providers with some requiring the additional fields to be filled in.
+You can select from five providers with some requiring the additional fields to be filled in.
 
 = DeepL =
 
@@ -94,89 +94,89 @@ Note, if both a global and user API key are set, the user API key will override 
 
 = Supported Languages by Provider =
 
-	Google Translate       Microsoft Translator   transltr.org           Yandex.Translate
-	---------------------  ---------------------  ---------------------  ---------------------
-	Afrikaans              Afrikaans              Arabic                 Catalan
-	Albanian               Arabic                 Bosnian                Czech
-	Arabic                 Bosnian                Bulgarian              Danish
-	Armenian               Bulgarian              Catalan                Dutch
-	Azerbaijani            Catalan                Croatian               Estonian
-	Basque                 Croatian               Czech                  Finnish
-	Bosnian                Czech                  Danish                 French (France)
-	Bulgarian              Danish                 Dutch                  German
-	Catalan                Dutch                  Estonian               Greek
-	Croatian               Estonian               Finnish                Hungarian
-	Czech                  Finnish                French (France)        Italian
-	Danish                 French (France)        German                 Latvian
-	Dutch                  German                 Greek                  Lithuanian
-	English                Greek                  Hebrew                 Macedonian
-	Esperanto              Hebrew                 Hindi                  Norwegian
-	Estonian               Hindi                  Hungarian              Portuguese (Portugal)
-	Finnish                Hungarian              Indonesian             Russian
-	French (France)        Indonesian             Italian                Slovak
-	Galician               Italian                Japanese               Slovenian
-	Georgian               Japanese               Korean                 Spanish (Spain)
-	German                 Klingon                Latvian                Swedish
-	Greek                  Korean                 Lithuanian             Turkish
-	Gujarati               Latvian                Malay                  Ukrainian
-	Hausa                  Lithuanian             Norwegian
-	Hebrew                 Malay                  Persian
-	Hindi                  Norwegian              Polish
-	Hungarian              Persian                Portuguese (Portugal)
-	Icelandic              Polish                 Romanian
-	Indonesian             Portuguese (Portugal)  Russian
-	Irish                  Romanian               Serbian
-	Italian                Russian                Slovak
-	Japanese               Serbian                Slovenian
-	Javanese               Slovak                 Spanish (Spain)
-	Kannada                Slovenian              Swahili
-	Kazakh                 Spanish (Spain)        Swedish
-	Khmer                  Swahili                Thai
-	Korean                 Swedish                Turkish
-	Lao                    Thai                   Ukrainian
-	Latin                  Turkish                Urdu
-	Latvian                Ukrainian              Vietnamese
-	Lithuanian             Urdu                   Welsh
-	Macedonian             Vietnamese             Yiddish
-	Malagasy               Welsh
-	Malay
-	Malayalam
-	Maori
-	Marathi
-	Mongolian
-	Nepali
-	Norwegian
-	Norwegian (Bokmål)
-	Norwegian (Nynorsk)
-	Persian
-	Polish
-	Portuguese (Portugal)
-	Punjabi
-	Romanian
-	Russian
-	Scottish Gaelic
-	Serbian
-	Sinhala
-	Slovak
-	Slovenian
-	Somali
-	Spanish (Spain)
-	Sundanese
-	Swahili
-	Swedish
-	Tagalog
-	Tajik
-	Tamil
-	Telugu
-	Thai
-	Turkish
-	Ukrainian
-	Urdu
-	Uzbek
-	Vietnamese
-	Welsh
-	Yiddish
-	Yoruba
+	DeepL                  Google Translate       Microsoft Translator   transltr.org           Yandex.Translate
+	---------------------  ---------------------  ---------------------  ---------------------  ---------------------
+	Chinese                Afrikaans              Afrikaans              Arabic                 Catalan
+	Dutch                  Albanian               Arabic                 Bosnian                Czech
+	English (American)     Arabic                 Bosnian                Bulgarian              Danish
+	English (British)      Armenian               Bulgarian              Catalan                Dutch
+	Estonian               Azerbaijani            Catalan                Croatian               Estonian
+	Finnish                Basque                 Croatian               Czech                  Finnish
+	French                 Bosnian                Czech                  Danish                 French (France)
+	German                 Bulgarian              Danish                 Dutch                  German
+	Greek                  Catalan                Dutch                  Estonian               Greek
+	Hungarian              Croatian               Estonian               Finnish                Hungarian
+	Italian                Czech                  Finnish                French (France)        Italian
+	Japanese               Danish                 French (France)        German                 Latvian
+	Latvian                Dutch                  German                 Greek                  Lithuanian
+	Lithuanian             English                Greek                  Hebrew                 Macedonian
+	Polish                 Esperanto              Hebrew                 Hindi                  Norwegian
+	Portuguese (Brazilian) Estonian               Hindi                  Hungarian              Portuguese (Portugal)
+	Portuguese (European)  Finnish                Hungarian              Indonesian             Russian
+	Romanian               French (France)        Indonesian             Italian                Slovak
+	Russian                Galician               Italian                Japanese               Slovenian
+	Slovak                 Georgian               Japanese               Korean                 Spanish (Spain)
+	Slovenian              German                 Klingon                Latvian                Swedish
+	Spanish                Greek                  Korean                 Lithuanian             Turkish
+	Swedish                Gujarati               Latvian                Malay                  Ukrainian
+	                       Hausa                  Lithuanian             Norwegian
+	                       Hebrew                 Malay                  Persian
+	                       Hindi                  Norwegian              Polish
+	                       Hungarian              Persian                Portuguese (Portugal)
+	                       Icelandic              Polish                 Romanian
+	                       Indonesian             Portuguese (Portugal)  Russian
+	                       Irish                  Romanian               Serbian
+	                       Italian                Russian                Slovak
+	                       Japanese               Serbian                Slovenian
+	                       Javanese               Slovak                 Spanish (Spain)
+	                       Kannada                Slovenian              Swahili
+	                       Kazakh                 Spanish (Spain)        Swedish
+	                       Khmer                  Swahili                Thai
+	                       Korean                 Swedish                Turkish
+	                       Lao                    Thai                   Ukrainian
+	                       Latin                  Turkish                Urdu
+	                       Latvian                Ukrainian              Vietnamese
+	                       Lithuanian             Urdu                   Welsh
+	                       Macedonian             Vietnamese             Yiddish
+	                       Malagasy               Welsh
+	                       Malay
+	                       Malayalam
+	                       Maori
+	                       Marathi
+	                       Mongolian
+	                       Nepali
+	                       Norwegian
+	                       Norwegian (Bokmål)
+	                       Norwegian (Nynorsk)
+	                       Persian
+	                       Polish
+	                       Portuguese (Portugal)
+	                       Punjabi
+	                       Romanian
+	                       Russian
+	                       Scottish Gaelic
+	                       Serbian
+	                       Sinhala
+	                       Slovak
+	                       Slovenian
+	                       Somali
+	                       Spanish (Spain)
+	                       Sundanese
+	                       Swahili
+	                       Swedish
+	                       Tagalog
+	                       Tajik
+	                       Tamil
+	                       Telugu
+	                       Thai
+	                       Turkish
+	                       Ukrainian
+	                       Urdu
+	                       Uzbek
+	                       Vietnamese
+	                       Welsh
+	                       Yiddish
+	                       Yoruba
 
 == Installation ==
 

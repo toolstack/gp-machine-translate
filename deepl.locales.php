@@ -25,4 +25,3 @@ $gp_machine_translate_locales = array(
     'sv' => 'sv',
     'zh_cn' => 'zh',
 );
-
