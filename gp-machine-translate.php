@@ -38,10 +38,10 @@ class GP_Machine_Translate {
 		// Add the admin page to the WordPress settings menu.
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10, 1 );
 
-		$this->providers = array( 'Google Translate', 'Microsoft Translator', 'transltr.org', 'Yandex.Translate' );
-		$this->banners = array( 'Google Translate' => 'Google Translate', 'Microsoft Translator' => 'Microsoft Translator', 'transltr.org' => 'transltr.org', 'Yandex.Translate' => '<a href="http://translate.yandex.com/" target="_blank">Powered by Yandex.Translate</a>' );
-		$provider_includes = array( 'Yandex.Translate' => 'yandex.locales.php', 'Microsoft Translator' => 'microsoft.locales.php', 'Google Translate' => 'google.locales.php', 'transltr.org' => 'transltr.locales.php' );
-		$provider_key_required = array( 'Google Translate' => true, 'Microsoft Translator' => true, 'transltr.org' => false, 'Yandex.Translate' => true );
+		$this->providers = array( 'DeepL', 'Google Translate', 'Microsoft Translator', 'transltr.org', 'Yandex.Translate' );
+		$this->banners = array( 'DeepL' => 'DeepL', 'Google Translate' => 'Google Translate', 'Microsoft Translator' => 'Microsoft Translator', 'transltr.org' => 'transltr.org', 'Yandex.Translate' => '<a href="http://translate.yandex.com/" target="_blank">Powered by Yandex.Translate</a>' );
+		$provider_includes = array( 'DeepL' => 'deepl.locales.php', 'Yandex.Translate' => 'yandex.locales.php', 'Microsoft Translator' => 'microsoft.locales.php', 'Google Translate' => 'google.locales.php', 'transltr.org' => 'transltr.locales.php' );
+		$provider_key_required = array( 'Deepl' => true, 'Google Translate' => true, 'Microsoft Translator' => true, 'transltr.org' => false, 'Yandex.Translate' => true );
 
 		if( get_option( 'gp_machine_translate_version', '0.7' ) != $this->version ) {
 			$this->upgrade();
@@ -415,6 +415,9 @@ class GP_Machine_Translate {
 		}
 
 		switch( $this->provider ) {
+			case 'DeepL':
+				return $this->deepl_translate_batch( $locale, $strings );
+
 			case 'Google Translate':
 				return $this->google_translate_batch( $locale, $strings );
 
@@ -506,6 +509,75 @@ class GP_Machine_Translate {
 		return $translation;
 
 	}
+
+    private function deepl_translate_batch( $locale, $strings ) {
+        // If we don't have a supported DeepL translation code, throw an error.
+        if ( ! array_key_exists( $locale, $this->locales ) ) {
+            return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s.", $locale, $this->provider ) );
+        }
+
+        // If we don't have any strings, throw an error.
+        if ( count( $strings ) == 0 ) {
+            return new WP_Error( 'gp_machine_translate', "No strings found to translate." );
+        }
+
+        // If we have too many strings, throw an error.
+        if ( count( $strings ) > 50 ) {
+            return new WP_Error( 'gp_machine_translate', "Only 50 strings allowed." );
+        }
+
+        $postFields = http_build_query([
+            'auth_key' => $this->key,
+            'source_lang' => 'en',
+            'target_lang' => urlencode( $this->locales[$locale] ),
+            'tag_handling' => 'xml',
+        ]);
+
+        foreach ($strings as $string) {
+            $postFields .= '&text='.$string;
+        }
+
+        $response = wp_remote_post('https://api.deepl.com/v2/translate', ['body' => $postFields]);
+
+        // Did we get an error?
+        if ( is_wp_error( $response ) ) {
+            return $response;
+        }
+
+        // Decode the response from DeepL.
+        $json = json_decode( wp_remote_retrieve_body( $response ) );
+
+        // If something went wrong with the response from DeepL, throw an error.
+        if ( ! $json ) {
+            return new WP_Error( 'gp_machine_translate', 'Error decoding JSON from DeepL Translate.' );
+        }
+
+        if ( isset( $json->error ) ) {
+            return new WP_Error( 'gp_machine_translate', sprintf( 'Error auto-translating: %1$s', $json->error->errors[0]->message ) );
+        }
+
+        // Setup an temporary array to use to process the response.
+        $translations = array();
+        $translatedStrings = array_column($json->translations, 'text');
+
+        // Merge the originals and translations arrays.
+        $items = gp_array_zip( $strings, $translatedStrings );
+
+        // If there are no items, throw an error.
+        if ( ! $items ) {
+            return new WP_Error( 'gp_machine_translate', 'Error merging arrays' );
+        }
+
+        // Loop through the items and clean up the responses.
+        foreach ( $items as $item ) {
+            list( $string, $translation ) = $item;
+
+            $translations[] = $this->google_translate_fix( $translation );
+        }
+
+        // Return the results.
+        return $translations;
+    }
 
 	private function yandex_translate_batch( $locale, $strings ) {
 		// If we don't have a supported Yandex translation code, throw an error.
