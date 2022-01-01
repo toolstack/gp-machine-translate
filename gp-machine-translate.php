@@ -41,7 +41,7 @@ class GP_Machine_Translate {
 		$this->providers = array( 'DeepL', 'Google Translate', 'Microsoft Translator', 'transltr.org', 'Yandex.Translate' );
 		$this->banners = array( 'DeepL' => 'DeepL', 'Google Translate' => 'Google Translate', 'Microsoft Translator' => 'Microsoft Translator', 'transltr.org' => 'transltr.org', 'Yandex.Translate' => '<a href="http://translate.yandex.com/" target="_blank">Powered by Yandex.Translate</a>' );
 		$provider_includes = array( 'DeepL' => 'deepl.locales.php', 'Yandex.Translate' => 'yandex.locales.php', 'Microsoft Translator' => 'microsoft.locales.php', 'Google Translate' => 'google.locales.php', 'transltr.org' => 'transltr.locales.php' );
-		$provider_key_required = array( 'Deepl' => true, 'Google Translate' => true, 'Microsoft Translator' => true, 'transltr.org' => false, 'Yandex.Translate' => true );
+		$provider_key_required = array( 'DeepL' => true, 'Google Translate' => true, 'Microsoft Translator' => true, 'transltr.org' => false, 'Yandex.Translate' => true );
 
 		if( get_option( 'gp_machine_translate_version', '0.7' ) != $this->version ) {
 			$this->upgrade();
