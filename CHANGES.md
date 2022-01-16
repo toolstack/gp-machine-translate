@@ -1,5 +1,5 @@
 ## 1.1
-* Release date: TBD
+* Release date: January 16, 2022
 * Added DeepL support, thanks @Borlabs-Ben.
 
 ## 1.0
