@@ -1,3 +1,7 @@
+## 1.1
+* Release date: TBD
+* Added DeepL support, thanks @Borlabs-Ben.
+
 ## 1.0
 * Release date: November 15, 2016
 * Added timeout for batch translations to help prevent the white screen of death.
