@@ -13,7 +13,7 @@ $gp.machine_translate = function( $ ) { return {
 		if( !original_text ) {
 			original_text = link.parents( '.textareas' ).siblings( 'p:last' ).children( '.original' ).html();
 		}
-		
+
 		if( !original_text ) {
 			return;
 		}
@@ -27,7 +27,7 @@ $gp.machine_translate = function( $ ) { return {
 			'original': original_text,
 		};
 
-		jQuery.ajax( { 
+		jQuery.ajax( {
 						url: gp_machine_translate.ajaxurl,
 						type: 'post',
 						data: data,
@@ -35,10 +35,10 @@ $gp.machine_translate = function( $ ) { return {
 		})
 			.always( function( result ) {
 				if( ! result.error && result.data.translatedText != '' ) {
-					link.parent( 'p' ).siblings( 'textarea' ).html( result.data.translatedText ).focus();
+					link.parent( 'div' ).parent( 'div' ).children( 'textarea' ).html( result.data.translatedText[0] ).focus();
 					$gp.notices.success( 'Translated!' );
 				} else {
-					$gp.notices.error( 'Error in translating via Google Translate: ' + result.error.message + ': ' + result.error.reason );
+					$gp.notices.error( 'Error in translating via Machine Translate: ' + result.error.message + ': ' + result.error.reason );
 					link.parent( 'p' ).siblings( 'textarea' ).focus();
 				}
 		});
