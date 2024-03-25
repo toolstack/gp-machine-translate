@@ -85,22 +85,6 @@
 		$wp_md .= "\t" . rtrim( $line ) . PHP_EOL;
 	}
 
-	$output .= '|';
-	$markdown .= '|';
-	$wp_md .= "\t";
-
-	foreach( $providers as $provider ) {
-		$padding = str_repeat( '-', $width );
-
-		$output .= $padding . '  ';
-		$markdown .= $padding . '--|';
-		$wp_md .= $padding . '  ';
-	}
-
-	$output = rtrim( $output ) . PHP_EOL;
-	$markdown = rtrim( $markdown ) . PHP_EOL;
-	$wp_md = rtrim( $wp_md ) . PHP_EOL;
-
 	file_put_contents( 'provider-chart.ascii.txt', $output );
 	file_put_contents( 'provider-chart.markdown.txt', $markdown );
 	file_put_contents( 'provider-chart.wordpress.txt', $wp_md );
