@@ -20,12 +20,12 @@ You will have three Fields to configure:
 	1. Translation Provider
 	2. Global API Key
 	3. Client ID
-	
+
 You can select from five providers with some requiring the additional fields to be filled in.
 
 ## DeepL
 
-DeepL requires a DeepL API Pro account.
+DeepL now has a free tier that allows you to access the API for 500k words per month.  More requires a DeepL API Pro account.
 
 * Login/signup [DeepL API Pro](https://www.deepl.com/pro)
 * Go to your account and scroll down to [Authentication Key for DeepL API](https://www.deepl.com/pro-account/summary)
@@ -48,14 +48,12 @@ Microsoft Translator requires an API key to function, to do this you must regist
 Microsoft has a walk through on how to subscribe to the Translator service here:
 
 	https://www.microsoft.com/en-us/translator/getstarted.aspx
-	
+
 You will need both the client secret and client id for it to function with GP Machine Translate.
 
 ## transltr.org
 
-transltr.org is a completely free service and does not require any API key or other configuration.  Simply select it as the desired translation service in the GP Machine Translate settings page and you're off to the races.
-
-This service operates via unsecured HTTP, while that's probably not a concern, it should be noted for your reference.
+This service no longer exists and has been removed from the plugin.
 
 ## Yandex.Translate
 
@@ -79,86 +77,86 @@ Note, if both a global and user API key are set, the user API key will override 
 
 ## Supported Languages by Provider
 
-DeepL     | Google Translate     | Microsoft Translator | transltr.org         | Yandex.Translate     |
--------------------- | -------------------- | -------------------- | -------------------- | -------------------- |
-| Chinese              | Afrikaans            | Afrikaans            | Arabic               | Catalan              |
-| Dutch                | Albanian             | Arabic               | Bosnian              | Czech                |
-| English (American)   | Arabic               | Bosnian              | Bulgarian            | Danish               |
-| English (British)    | Armenian             | Bulgarian            | Catalan              | Dutch                |
-| Estonian             | Azerbaijani          | Catalan              | Croatian             | Estonian             |
-| Finnish              | Basque               | Croatian             | Czech                | Finnish              |
-| French               | Bosnian              | Czech                | Danish               | French (France)      |
-| German               | Bulgarian            | Danish               | Dutch                | German               |
-| Greek                | Catalan              | Dutch                | Estonian             | Greek                |
-| Hungarian            | Croatian             | Estonian             | Finnish              | Hungarian            |
-| Italian              | Czech                | Finnish              | French (France)      | Italian              |
-| Japanese             | Danish               | French (France)      | German               | Latvian              |
-| Latvian              | Dutch                | German               | Greek                | Lithuanian           |
-| Lithuanian           | English              | Greek                | Hebrew               | Macedonian           |
-| Polish               | Esperanto            | Hebrew               | Hindi                | Norwegian            |
-| Portuguese (Brazilian) | Estonian             | Hindi                | Hungarian            | Portuguese (Portugal) |
-| Portuguese (European) | Finnish              | Hungarian            | Indonesian           | Russian              |
-| Romanian             | French (France)      | Indonesian           | Italian              | Slovak               |
-| Russian              | Galician             | Italian              | Japanese             | Slovenian            |
-| Slovak               | Georgian             | Japanese             | Korean               | Spanish (Spain)      |
-| Slovenian            | German               | Klingon              | Latvian              | Swedish              |
-| Spanish              | Greek                | Korean               | Lithuanian           | Turkish              |
-| Swedish              | Gujarati             | Latvian              | Malay                | Ukrainian            |
-|                      | Hausa                | Lithuanian           | Norwegian            |                      |
-|                      | Hebrew               | Malay                | Persian              |                      |
-|                      | Hindi                | Norwegian            | Polish               |                      |
-|                      | Hungarian            | Persian              | Portuguese (Portugal) |                      |
-|                      | Icelandic            | Polish               | Romanian             |                      |
-|                      | Indonesian           | Portuguese (Portugal) | Russian              |                      |
-|                      | Irish                | Romanian             | Serbian              |                      |
-|                      | Italian              | Russian              | Slovak               |                      |
-|                      | Japanese             | Serbian              | Slovenian            |                      |
-|                      | Javanese             | Slovak               | Spanish (Spain)      |                      |
-|                      | Kannada              | Slovenian            | Swahili              |                      |
-|                      | Kazakh               | Spanish (Spain)      | Swedish              |                      |
-|                      | Khmer                | Swahili              | Thai                 |                      |
-|                      | Korean               | Swedish              | Turkish              |                      |
-|                      | Lao                  | Thai                 | Ukrainian            |                      |
-|                      | Latin                | Turkish              | Urdu                 |                      |
-|                      | Latvian              | Ukrainian            | Vietnamese           |                      |
-|                      | Lithuanian           | Urdu                 | Welsh                |                      |
-|                      | Macedonian           | Vietnamese           | Yiddish              |                      |
-|                      | Malagasy             | Welsh                |                      |                      |
-|                      | Malay                |                      |                      |                      |
-|                      | Malayalam            |                      |                      |                      |
-|                      | Maori                |                      |                      |                      |
-|                      | Marathi              |                      |                      |                      |
-|                      | Mongolian            |                      |                      |                      |
-|                      | Nepali               |                      |                      |                      |
-|                      | Norwegian            |                      |                      |                      |
-|                      | Norwegian (Bokmål)  |                      |                      |                      |
-|                      | Norwegian (Nynorsk)  |                      |                      |                      |
-|                      | Persian              |                      |                      |                      |
-|                      | Polish               |                      |                      |                      |
-|                      | Portuguese (Portugal) |                      |                      |                      |
-|                      | Punjabi              |                      |                      |                      |
-|                      | Romanian             |                      |                      |                      |
-|                      | Russian              |                      |                      |                      |
-|                      | Scottish Gaelic      |                      |                      |                      |
-|                      | Serbian              |                      |                      |                      |
-|                      | Sinhala              |                      |                      |                      |
-|                      | Slovak               |                      |                      |                      |
-|                      | Slovenian            |                      |                      |                      |
-|                      | Somali               |                      |                      |                      |
-|                      | Spanish (Spain)      |                      |                      |                      |
-|                      | Sundanese            |                      |                      |                      |
-|                      | Swahili              |                      |                      |                      |
-|                      | Swedish              |                      |                      |                      |
-|                      | Tagalog              |                      |                      |                      |
-|                      | Tajik                |                      |                      |                      |
-|                      | Tamil                |                      |                      |                      |
-|                      | Telugu               |                      |                      |                      |
-|                      | Thai                 |                      |                      |                      |
-|                      | Turkish              |                      |                      |                      |
-|                      | Ukrainian            |                      |                      |                      |
-|                      | Urdu                 |                      |                      |                      |
-|                      | Uzbek                |                      |                      |                      |
-|                      | Vietnamese           |                      |                      |                      |
-|                      | Welsh                |                      |                      |                      |
-|                      | Yiddish              |                      |                      |                      |
-|                      | Yoruba               |                      |                      |                      |
+| DeepL                 | Google Translate     | Microsoft Translator |  Yandex.Translate     |
+|-----------------------|----------------------|----------------------|-----------------------|
+| Chinese               | Afrikaans            | Afrikaans            | Catalan               |
+| Dutch                 | Albanian             | Arabic               | Czech                 |
+| English (American)    | Arabic               | Bosnian              | Danish                |
+| English (British)     | Armenian             | Bulgarian            | Dutch                 |
+| Estonian              | Azerbaijani          | Catalan              | Estonian              |
+| Finnish               | Basque               | Croatian             | Finnish               |
+| French                | Bosnian              | Czech                | French (France)       |
+| German                | Bulgarian            | Danish               | German                |
+| Greek                 | Catalan              | Dutch                | Greek                 |
+| Hungarian             | Croatian             | Estonian             | Hungarian             |
+| Italian               | Czech                | Finnish              | Italian               |
+| Japanese              | Danish               | French (France)      | Latvian               |
+| Latvian               | Dutch                | German               | Lithuanian            |
+| Lithuanian            | English              | Greek                | Macedonian            |
+| Polish                | Esperanto            | Hebrew               | Norwegian             |
+| Portuguese (Brazilian)| Estonian             | Hindi                | Portuguese (Portugal) |
+| Portuguese (European) | Finnish              | Hungarian            | Russian               |
+| Romanian              | French (France)      | Indonesian           | Slovak                |
+| Russian               | Galician             | Italian              | Slovenian             |
+| Slovak                | Georgian             | Japanese             | Spanish (Spain)       |
+| Slovenian             | German               | Klingon              | Swedish               |
+| Spanish               | Greek                | Korean               | Turkish               |
+| Swedish               | Gujarati             | Latvian              | Ukrainian             |
+|                       | Hausa                | Lithuanian           |                       |
+|                       | Hebrew               | Malay                |                       |
+|                       | Hindi                | Norwegian            |                       |
+|                       | Hungarian            | Persian              |                       |
+|                       | Icelandic            | Polish               |                       |
+|                       | Indonesian           | Portuguese (Portugal)|                       |
+|                       | Irish                | Romanian             |                       |
+|                       | Italian              | Russian              |                       |
+|                       | Japanese             | Serbian              |                       |
+|                       | Javanese             | Slovak               |                       |
+|                       | Kannada              | Slovenian            |                       |
+|                       | Kazakh               | Spanish (Spain)      |                       |
+|                       | Khmer                | Swahili              |                       |
+|                       | Korean               | Swedish              |                       |
+|                       | Lao                  | Thai                 |                       |
+|                       | Latin                | Turkish              |                       |
+|                       | Latvian              | Ukrainian            |                       |
+|                       | Lithuanian           | Urdu                 |                       |
+|                       | Macedonian           | Vietnamese           |                       |
+|                       | Malagasy             | Welsh                |                       |
+|                       | Malay                |                      |                       |
+|                       | Malayalam            |                      |                       |
+|                       | Maori                |                      |                       |
+|                       | Marathi              |                      |                       |
+|                       | Mongolian            |                      |                       |
+|                       | Nepali               |                      |                       |
+|                       | Norwegian            |                      |                       |
+|                       | Norwegian (Bokmål)   |                      |                       |
+|                       | Norwegian (Nynorsk)  |                      |                       |
+|                       | Persian              |                      |                       |
+|                       | Polish               |                      |                       |
+|                       | Portuguese (Portugal)|                      |                       |
+|                       | Punjabi              |                      |                       |
+|                       | Romanian             |                      |                       |
+|                       | Russian              |                      |                       |
+|                       | Scottish Gaelic      |                      |                       |
+|                       | Serbian              |                      |                       |
+|                       | Sinhala              |                      |                       |
+|                       | Slovak               |                      |                       |
+|                       | Slovenian            |                      |                       |
+|                       | Somali               |                      |                       |
+|                       | Spanish (Spain)      |                      |                       |
+|                       | Sundanese            |                      |                       |
+|                       | Swahili              |                      |                       |
+|                       | Swedish              |                      |                       |
+|                       | Tagalog              |                      |                       |
+|                       | Tajik                |                      |                       |
+|                       | Tamil                |                      |                       |
+|                       | Telugu               |                      |                       |
+|                       | Thai                 |                      |                       |
+|                       | Turkish              |                      |                       |
+|                       | Ukrainian            |                      |                       |
+|                       | Urdu                 |                      |                       |
+|                       | Uzbek                |                      |                       |
+|                       | Vietnamese           |                      |                       |
+|                       | Welsh                |                      |                       |
+|                       | Yiddish              |                      |                       |
+|                       | Yoruba               |                      |                       |

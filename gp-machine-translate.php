@@ -28,7 +28,7 @@ class GP_Machine_Translate {
 	public function __construct() {
 		// Load the plugin's translated strings.
 		load_plugin_textdomain( 'gp-machine-translate' );
-		
+
 		// Handle the WordPress user profile items
 		add_action( 'show_user_profile', array( $this, 'show_user_profile' ), 10, 1 );
 		add_action( 'edit_user_profile', array( $this, 'edit_user_profile' ), 10, 1 );
@@ -38,10 +38,10 @@ class GP_Machine_Translate {
 		// Add the admin page to the WordPress settings menu.
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10, 1 );
 
-		$this->providers = array( 'DeepL', 'Google Translate', 'Microsoft Translator', 'transltr.org', 'Yandex.Translate' );
-		$this->banners = array( 'DeepL' => 'DeepL', 'Google Translate' => 'Google Translate', 'Microsoft Translator' => 'Microsoft Translator', 'transltr.org' => 'transltr.org', 'Yandex.Translate' => '<a href="http://translate.yandex.com/" target="_blank">Powered by Yandex.Translate</a>' );
-		$provider_includes = array( 'DeepL' => 'deepl.locales.php', 'Yandex.Translate' => 'yandex.locales.php', 'Microsoft Translator' => 'microsoft.locales.php', 'Google Translate' => 'google.locales.php', 'transltr.org' => 'transltr.locales.php' );
-		$provider_key_required = array( 'DeepL' => true, 'Google Translate' => true, 'Microsoft Translator' => true, 'transltr.org' => false, 'Yandex.Translate' => true );
+		$this->providers = array( 'DeepL', 'Google Translate', 'Microsoft Translator', 'Yandex.Translate' );
+		$this->banners = array( 'DeepL' => 'DeepL', 'Google Translate' => 'Google Translate', 'Microsoft Translator' => 'Microsoft Translator', 'Yandex.Translate' => '<a href="http://translate.yandex.com/" target="_blank">Powered by Yandex.Translate</a>' );
+		$provider_includes = array( 'DeepL' => 'deepl.locales.php', 'Yandex.Translate' => 'yandex.locales.php', 'Microsoft Translator' => 'microsoft.locales.php', 'Google Translate' => 'google.locales.php' );
+		$provider_key_required = array( 'DeepL' => true, 'Google Translate' => true, 'Microsoft Translator' => true, 'Yandex.Translate' => true );
 
 		if( get_option( 'gp_machine_translate_version', '0.7' ) != $this->version ) {
 			$this->upgrade();
