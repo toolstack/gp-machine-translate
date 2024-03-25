@@ -14,7 +14,7 @@ A machine translate plugin for GlotPress as a WordPress plugin.
 
 == Description ==
 
-A machine translate plugin for [GlotPress as a WordPress plugin](https://github.com/GlotPress/GlotPress-WP).
+A machine translate plugin for [GlotPress as a WordPress plugin](https://github.com/GlotPress/GlotPress).
 
 Five machine translation providers are supported (though only one at a time):
 
