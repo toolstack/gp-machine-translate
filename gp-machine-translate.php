@@ -61,7 +61,7 @@ class GP_Machine_Translate {
 
 		$gp_machine_translate_locales = array();
 
-		// Inlcude the provider code, otherwise bail out.
+		// Include the provider code, otherwise bail out.
 		if( in_array( $this->provider, $this->providers ) ) {
 			include( $provider_includes[$this->provider] );
 		} else {
@@ -426,63 +426,11 @@ class GP_Machine_Translate {
 				return $this->microsoft_translate_batch( $locale, $strings );
 
 				break;
-			case 'transltr.org':
-				return $this->transltr_translate_batch( $locale, $strings );
-
-				break;
 			case 'Yandex.Translate':
 				return $this->yandex_translate_batch( $locale, $strings );
 
 				break;
 		}
-	}
-
-	private function transltr_translate_batch( $locale, $strings ) {
-		// If we don't have a supported Yandex translation code, throw an error.
-		if ( ! array_key_exists( $locale, $this->locales ) ) {
-			return new WP_Error( 'gp_machine_translate', sprintf( "The locale %s isn't supported by %s.", $locale, $this->provider ) );
-		}
-
-		// If we don't have any strings, throw an error.
-		if ( count( $strings ) == 0 ) {
-			return new WP_Error( 'gp_machine_translate', "No strings found to translate." );
-		}
-
-		// This is the URL of the transltr.org API.
-		$base_url = 'http://www.transltr.org/api/translate?from=en&to=' . urlencode( $this->locales[$locale] ) . '&text=';
-
-		// Setup an temporary array to use to process the response.
-		$translations = array();
-
-		// Loop through the stings and add them to the $url as a query string.
-		foreach ( $strings as $string ) {
-			$url = $base_url . urlencode( $string );
-
-			// Get the response from transltr.org.
-			$response = wp_remote_get( $url );
-
-			// Did we get an error?
-			if ( is_wp_error( $response ) ) {
-				return $response;
-			}
-
-			// Decode the response from transltr.org.
-			$json = json_decode( wp_remote_retrieve_body( $response ) );
-
-			// If something went wrong with the response from transltr.org, throw an error.
-			if ( ! $json ) {
-				return new WP_Error( 'gp_machine_translate', 'Error decoding JSON from transltr.org Translate.' );
-			}
-
-			if ( isset( $json->error ) ) {
-				return new WP_Error( 'gp_machine_translate', sprintf( 'Error auto-translating: %1$s', $json->error->errors[0]->message ) );
-			}
-
-			$translations[] = $this->google_translate_fix( $json->translationText );
-		}
-
-		// Return the results.
-		return $translations;
 	}
 
 	private function microsoft_translate_batch( $locale, $strings ) {
@@ -495,7 +443,6 @@ class GP_Machine_Translate {
 		if ( count( $strings ) == 0 ) {
 			return new WP_Error( 'gp_machine_translate', "No strings found to translate." );
 		}
-
 
 		include( dirname( __FILE__ ) . '/vendor/autoload.php' );
 
@@ -537,7 +484,7 @@ class GP_Machine_Translate {
             $postFields .= '&text='.$string;
         }
 
-        $response = wp_remote_post('https://api.deepl.com/v2/translate', ['body' => $postFields]);
+        $response = wp_remote_post('https://api-free.deepl.com/v2/translate', ['body' => $postFields]);
 
         // Did we get an error?
         if ( is_wp_error( $response ) ) {
