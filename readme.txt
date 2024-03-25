@@ -176,4 +176,3 @@ Note, if both a global and user API key are set, the user API key will override 
 |                       | Welsh                 |                       |                       |
 |                       | Yiddish               |                       |                       |
 |                       | Yoruba                |                       |                       |
-|-----------------------|-----------------------|-----------------------|-----------------------|
