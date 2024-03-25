@@ -16,12 +16,11 @@ A machine translate plugin for GlotPress as a WordPress plugin.
 
 A machine translate plugin for [GlotPress as a WordPress plugin](https://github.com/GlotPress/GlotPress).
 
-Five machine translation providers are supported (though only one at a time):
+Four machine translation providers are supported (though only one at a time):
 
 * DeepL (pay per character, Pro account required)
 * Google Translate (pay per character)
 * Microsoft Translator (free tier available)
-* translte.org (free)
 * Yandex.Translate (free but requires Yandex account)
 
 Note: This plugin assumes the source language is English as support for automated translation from other source languages is limited.
