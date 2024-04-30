@@ -48,7 +48,7 @@ class GP_Machine_Translate {
 		}
 
 		// Get the global translate provider from the WordPress options table.
-		$this->provider = get_option( 'gp_machine_translate_provider' );
+		$this->provider = get_option( 'gp_machine_translate_provider', 'DeepL' );
 
 		// Set the key requirement.
 		$this->key_required = $provider_key_required[$this->provider];
