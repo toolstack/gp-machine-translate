@@ -1,0 +1,12 @@
+{
+    "name": "borlabs/gp-machine-translate-tools-php-cs-fixer",
+    "license": "proprietary",
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
+    },
+    "require": {
+        "friendsofphp/php-cs-fixer": "^3.1"
+    }
+}
