@@ -9,6 +9,7 @@
 **Stable tag:** 1.2  
 **License:** GPLv2  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
+**Requires PHP:** 7.4
 
 A machine translate plugin for GlotPress as a WordPress plugin.
 

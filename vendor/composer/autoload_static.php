@@ -6,6 +6,20 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit67fbca1eb8a3013cbbce9e0402cb3140
 {
+    public static $prefixLengthsPsr4 = array (
+        'G' => 
+        array (
+            'GpMachineTranslate\\' => 19,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'GpMachineTranslate\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/classes',
+        ),
+    );
+
     public static $prefixesPsr0 = array (
         'M' => 
         array (
@@ -16,10 +30,17 @@ class ComposerStaticInit67fbca1eb8a3013cbbce9e0402cb3140
         ),
     );
 
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit67fbca1eb8a3013cbbce9e0402cb3140::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit67fbca1eb8a3013cbbce9e0402cb3140::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit67fbca1eb8a3013cbbce9e0402cb3140::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit67fbca1eb8a3013cbbce9e0402cb3140::$classMap;
 
         }, null, ClassLoader::class);
     }

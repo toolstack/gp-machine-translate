@@ -11,7 +11,7 @@ function gp_machine_translate_action_callback() {
 	$locale = $_POST['locale'];
 	$strings = array( $_POST['original'] );
 	
-	$new_string = $gp_machine_translate->translate_batch( $locale, $strings );
+	$new_string = $gp_machine_translate->batchTranslate( $locale, $strings );
 	
 	if( is_wp_error( $new_string ) ) {
 		$translations = array( 'success' => false, 'error' => array( 'message' => $new_string->get_error_message(), 'reason' => $new_string->get_error_data() ) );
