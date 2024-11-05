@@ -8,9 +8,7 @@ use WP_Error;
 
 class DeepLProvider extends AbstractProvider
 {
-    public const API_URL = 'https://api.deepl.com';
-
-    public const API_URL_FREE = 'https://api-free.deepl.com';
+    public const API_URL = 'https://api-free.deepl.com';
 
     public const ENDPOINT_GLOSSARIES = '/v2/glossaries';
 
@@ -54,11 +52,11 @@ class DeepLProvider extends AbstractProvider
         'zh_cn' => 'zh',
     ];
 
-    protected const NAME = 'DeepL';
+    protected const NAME = 'DeepL - Free';
 
     protected const REQUIRES_AUTH_CLIENT_ID = false;
 
-    protected const REQUIRES_AUTH_KEY = false;
+    protected const REQUIRES_AUTH_KEY = true;
 
     private const SPECIAL_CHARACTERS = [
         'original' => [
@@ -84,42 +82,97 @@ class DeepLProvider extends AbstractProvider
             return $isValid;
         }
 
+        $translationData = $this->performTranslationRequest(
+            $this->getRequestBody($strings, $locale),
+        );
+
+        if ($translationData instanceof WP_Error) {
+            return $translationData;
+        }
+
+        return $this->getTranslatedStringsArray($translationData, $strings);
+    }
+
+    public function validateTranslationArguments(string $locale, array $strings): ?WP_Error
+    {
+        $isValid = parent::validateTranslationArguments($locale, $strings);
+
+        if ($isValid !== null) {
+            return $isValid;
+        }
+
         // If we have too many strings, throw an error.
         if (count($strings) > 50) {
             return new WP_Error('gp_machine_translate', 'Only 50 strings allowed.');
         }
 
-        $targetLanguage = $this->getLocales()[$locale];
-        $requestHeaders = [
-            'Content-Type' => 'application/json',
-        ];
+        return null;
+    }
+
+    protected function escapeSpecialCharacters(string $text): string
+    {
+        return str_replace(self::SPECIAL_CHARACTERS['original'], self::SPECIAL_CHARACTERS['replacement'], $text);
+    }
+
+    protected function getRequestBody(array $strings, string $locale, ?string $glossaryId = null): array
+    {
         $requestBody = [
             'source_lang' => 'en',
-            'target_lang' => $targetLanguage,
+            'target_lang' => $this->getLocales()[$locale],
             'tag_handling' => 'xml',
             'text' => [],
         ];
-        $apiUrl = self::API_URL_FREE;
 
-        if ($this->authKey !== null) {
-            $apiUrl = self::API_URL;
-            $requestHeaders['Authorization'] = 'DeepL-Auth-Key ' . $this->authKey;
-            $glossaryId = $this->getGlossaryId($targetLanguage);
-
-            if ($glossaryId) {
-                $requestBody['glossary_id'] = $glossaryId;
-            }
+        if ($glossaryId) {
+            $requestBody['glossary_id'] = $glossaryId;
         }
 
         foreach ($strings as $string) {
             $requestBody['text'][] = $this->escapeSpecialCharacters($string);
         }
 
+        return $requestBody;
+    }
+
+    protected function getTranslatedStringsArray(object $deepLTranslationData, array $strings)
+    {
+        // Setup an temporary array to use to process the response.
+        $translations = [];
+        $translatedStrings = array_column($deepLTranslationData->translations, 'text');
+
+        // Merge the originals and translations arrays.
+        $items = gp_array_zip($strings, $translatedStrings);
+
+        // If there are no items, throw an error.
+        if (!$items) {
+            return new WP_Error('gp_machine_translate', 'Error merging arrays');
+        }
+
+        // Loop through the items and clean up the responses.
+        foreach ($items as $item) {
+            list($string, $translation) = $item;
+
+            $translations[] = $this->unescapeSpecialCharacters(
+                $this->normalizePlaceholders($translation),
+            );
+        }
+
+        return $translations;
+    }
+
+    /**
+     * @return object|WP_Error
+     */
+    protected function performTranslationRequest(array $requestBody)
+    {
         $response = wp_remote_post(
-            $apiUrl . self::ENDPOINT_TRANSLATE,
+            static::API_URL . self::ENDPOINT_TRANSLATE,
             [
                 'method' => 'POST',
-                'headers' => $requestHeaders,
+                'headers' => [
+                    'Authorization' => 'DeepL-Auth-Key ' . $this->authKey,
+                    'Content-Type' => 'application/json',
+                ],
                 'body' => json_encode($requestBody),
             ],
         );
@@ -143,90 +196,10 @@ class DeepLProvider extends AbstractProvider
             return new WP_Error('gp_machine_translate', sprintf('Error auto-translating: %1$s', $json->error->errors[0]->message));
         }
 
-        // Setup an temporary array to use to process the response.
-        $translations = [];
-        $translatedStrings = array_column($json->translations, 'text');
-
-        // Merge the originals and translations arrays.
-        $items = gp_array_zip($strings, $translatedStrings);
-
-        // If there are no items, throw an error.
-        if (!$items) {
-            return new WP_Error('gp_machine_translate', 'Error merging arrays');
-        }
-
-        // Loop through the items and clean up the responses.
-        foreach ($items as $item) {
-            list($string, $translation) = $item;
-
-            $translations[] = $this->unescapeSpecialCharacters(
-                $this->normalizePlaceholders($translation),
-            );
-        }
-
-        return $translations;
+        return $json;
     }
 
-    private function escapeSpecialCharacters(string $text): string
-    {
-        return str_replace(self::SPECIAL_CHARACTERS['original'], self::SPECIAL_CHARACTERS['replacement'], $text);
-    }
-
-    private function getGlossaries(): ?array
-    {
-        $glossaries = null;
-
-        if ($this->authKey === null) {
-            return $glossaries;
-        }
-
-        $response = wp_remote_get(
-            self::API_URL . self::ENDPOINT_GLOSSARIES,
-            [
-                'headers' => [
-                    'Authorization' => 'DeepL-Auth-Key ' . $this->authKey,
-                ],
-            ],
-        );
-
-        if (is_wp_error($response)) {
-            return $response;
-        }
-
-        $jsonResponse = json_decode(
-            wp_remote_retrieve_body($response),
-        );
-
-        foreach ($jsonResponse->glossaries as $glossary) {
-            if (isset($glossary->glossary_id, $glossary->target_lang)) {
-                $glossaries[] = $glossary;
-            }
-        }
-
-        return $glossaries;
-    }
-
-    private function getGlossaryId(string $targetLanguage): ?string
-    {
-        $glossaryId = null;
-        $glossaries = $this->getGlossaries();
-
-        if ($glossaries === null) {
-            return null;
-        }
-
-        foreach ($glossaries as $glossary) {
-            if (isset($glossary->glossary_id, $glossary->target_lang) && $glossary->target_lang === $targetLanguage) {
-                $glossaryId = $glossary->glossary_id;
-
-                break;
-            }
-        }
-
-        return is_string($glossaryId) ? $glossaryId : null;
-    }
-
-    private function unescapeSpecialCharacters(string $text): string
+    protected function unescapeSpecialCharacters(string $text): string
     {
         return str_replace(self::SPECIAL_CHARACTERS['replacement'], self::SPECIAL_CHARACTERS['original'], $text);
     }

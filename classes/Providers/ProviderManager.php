@@ -19,6 +19,7 @@ final class ProviderManager
      */
     private array $registry = [
         DeepLProvider::IDENTIFIER => DeepLProvider::class,
+        DeepLProProvider::IDENTIFIER => DeepLProProvider::class,
         GoogleTranslateProvider::IDENTIFIER => GoogleTranslateProvider::class,
         MicrosoftTranslatorProvider::IDENTIFIER => MicrosoftTranslatorProvider::class,
         YandexTranslateProvider::IDENTIFIER => YandexTranslateProvider::class,
