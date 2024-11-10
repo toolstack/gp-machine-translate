@@ -87,6 +87,11 @@ class GP_Machine_Translate
             // Update the client ID
             update_option('gp_machine_translate_client_id', $authClientId);
 
+            // Update the extra info display option
+            $extraInfo = false;
+            if( array_key_exists('gp_machine_translate_extra_info', $_POST) ) { $extraInfo = true; }
+            update_option('gp_machine_translate_extra_info', $extraInfo);
+
             $this->provider = $this->providerManager->updateOrCreateProviderInstance(
                 $this->selectedProviderIdentifier,
                 $authClientId,
@@ -223,6 +228,18 @@ class GP_Machine_Translate
         // Since the profile and user edit code is identical, just call the profile update code.
         $this->personalOptionsUpdate($user);
     }
+
+    // This function adds the extra column to the locale's list with if the provider is supported.
+    public function gpExtraInfo($set, $project)
+    {
+        // Make sure we are currently on a supported locale.
+        if (isset($this->provider->getLocales()[$set->locale])) {
+            echo 'Supported by Machine Translate (' . $this->providersDisplayName[$this->provider::IDENTIFIER] . ')<br>';
+        } else {
+            echo 'Not supported by Machine Translate (' . $this->providersDisplayName[$this->provider::IDENTIFIER] . ')<br>';
+        }
+    }
+
 
     // This function adds the "Machine Translate" to the individual translation items.
     public function gpEntryActions($actions)
@@ -399,6 +416,7 @@ class GP_Machine_Translate
 
         $authClientId = get_option('gp_machine_translate_client_id', null);
         $authKey = get_option('gp_machine_translate_key', null);
+        $extraInfo = get_option('gp_machine_translate_extra_info', false);
 
         // Check to see if there is a user currently logged in.
         if (is_user_logged_in()) {
@@ -444,6 +462,11 @@ class GP_Machine_Translate
         // it has already run, so instead add the routes directly to the global GP_Router object.
         GP::$router->add('/bulk-translate/(.+?)', [$this, 'bulkTranslate'], 'get');
         GP::$router->add('/bulk-translate/(.+?)', [$this, 'bulkTranslate'], 'post');
+
+        // Add the extra column action for the project locales list.
+        if ($extraInfo == true) {
+            add_action( 'gp_project_template_translation_set_extra', array( $this, 'gpExtraInfo' ), 10, 2 );
+        }
     }
 
     // This function adds the admin settings page to WordPress.

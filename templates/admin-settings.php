@@ -39,6 +39,13 @@ $provider = $templateData['provider'];
                 </td>
             </tr>
             <tr>
+                <th><label for="gp_machine_translate_extra_info"><?php _e('Display extra info', 'gp-machine-translate'); ?></label></th>
+                <td>
+                    <input type="checkbox" id="gp_machine_translate_extra_info" name="gp_machine_translate_extra_info" <?php checked(true, get_option('gp_machine_translate_extra_info', false)); ?>">
+                    <p class="description"><?php _e('Display if a locale is supported by Machine Translate in the project\'s locale table.', 'gp-machine-translate'); ?></p>
+                </td>
+            </tr>
+            <tr>
                 <th><label for="gp_machine_translate_key"><?php _e('Global API Key', 'gp-machine-translate'); ?></label></th>
                 <td>
                     <input type="text" id="gp_machine_translate_key" name="gp_machine_translate_key" size="40" value="<?php echo htmlentities((string) $provider->getAuthKey()); ?>">
