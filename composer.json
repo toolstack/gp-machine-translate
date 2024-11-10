@@ -1,4 +1,9 @@
 {
+    "autoload": {
+        "psr-4": {
+            "GpMachineTranslate\\": "classes"
+        }
+    },
     "require": {
         "natxet/microsoft-translation-api": "*"
     },
