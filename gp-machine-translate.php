@@ -5,7 +5,7 @@ declare(strict_types=1);
  * Plugin Name: GP Machine Translate
  * Plugin URI: http://glot-o-matic.com/gp-machine-translate
  * Description: Machine Translate plugin for GlotPress.
- * Version: 1.2
+ * Version: 2.0
  * Author: Greg Ross
  * Author URI: http://toolstack.com
  * Tags: glotpress, glotpress plugin, translate, google, bing, yandex, microsoft
@@ -37,7 +37,7 @@ class GP_Machine_Translate
 
     private Template $template;
 
-    private $version = '1.2';
+    private $version = '2.0';
 
     public function __construct()
     {
