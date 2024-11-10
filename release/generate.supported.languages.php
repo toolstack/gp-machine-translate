@@ -33,7 +33,7 @@ foreach( $providers as $provider ) {
     }
 }
 
-$output = '| ';
+$output = '';
 $markdown = '| ';
 $wp_md = "\t";
 
@@ -51,7 +51,7 @@ $output = rtrim( $output ) . PHP_EOL;
 $markdown = rtrim( $markdown ) . PHP_EOL;
 $wp_md = rtrim( $wp_md ) . PHP_EOL;
 
-$output .= '|';
+$output .= '';
 $markdown .= '|';
 $wp_md .= "\t";
 
